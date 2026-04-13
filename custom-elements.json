@@ -1,0 +1,1696 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "src/oscd-editor-subscriber-msgbinding.spec.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "oscd-editor-subscriber-msgbinding",
+          "declaration": {
+            "name": "OscdEditorSubscriberMsgBinding",
+            "module": "/src/oscd-editor-subscriber-msgbinding.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/oscd-editor-subscriber-msgbinding.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "An editor plugin for subscribing IEDs to GOOSE messages.",
+          "name": "OscdEditorSubscriberMsgBinding",
+          "members": [
+            {
+              "kind": "field",
+              "name": "scopedElements",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ 'oscd-radio': OscdRadio, 'subscriber-list-goose': SubscriberListGoose, 'goose-list': GooseList, 'ied-list': IedList, 'oscd-scl-dialogs': OscdSclDialogs, }"
+            },
+            {
+              "kind": "field",
+              "name": "doc",
+              "type": {
+                "text": "XMLDocument"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "docVersion",
+              "type": {
+                "text": "unknown | undefined"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "goosePublisherView",
+              "type": {
+                "text": "HTMLElement"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "gooseSubscriberView",
+              "type": {
+                "text": "HTMLElement"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "listDiv",
+              "type": {
+                "text": "Element"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "sclDialogs",
+              "type": {
+                "text": "OscdSclDialogs"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "handleEditDialogEvent",
+              "privacy": "private"
+            }
+          ],
+          "mixins": [
+            {
+              "name": "ScopedElementsMixin",
+              "package": "@open-wc/scoped-elements/lit-element.js"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "oscd-editor-subscriber-msgbinding",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "OscdEditorSubscriberMsgBinding",
+            "module": "src/oscd-editor-subscriber-msgbinding.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/foundation/filtered-list.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "A slot-based filterable list. Renders a search input above an `<oscd-list>`\nand hides slotted items whose text content does not match the search query.\n\nItems can provide searchable text via their `data-value` attribute or via\ntheir `textContent`. Items without either are always shown.",
+          "name": "FilteredList",
+          "members": [
+            {
+              "kind": "field",
+              "name": "scopedElements",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ 'oscd-icon': OscdIcon, 'oscd-list': OscdList, 'oscd-outlined-text-field': OscdOutlinedTextField, }"
+            },
+            {
+              "kind": "field",
+              "name": "activatable",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Not used functionally but preserved for API compatibility with legacy callers.",
+              "attribute": "activatable"
+            },
+            {
+              "kind": "field",
+              "name": "searchValue",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "private",
+              "default": "''"
+            },
+            {
+              "kind": "field",
+              "name": "searchField",
+              "type": {
+                "text": "HTMLElement & { value: string } | undefined"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "method",
+              "name": "onInput",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applyFilter",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "activatable",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Not used functionally but preserved for API compatibility with legacy callers.",
+              "fieldName": "activatable"
+            }
+          ],
+          "mixins": [
+            {
+              "name": "ScopedElementsMixin",
+              "package": "@open-wc/scoped-elements/lit-element.js"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "FilteredList",
+          "declaration": {
+            "name": "FilteredList",
+            "module": "src/foundation/filtered-list.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/foundation/ied.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "getFcdaReferences",
+          "return": {
+            "type": {
+              "text": "string"
+            }
+          },
+          "parameters": [
+            {
+              "name": "elementContainingFcdaReferences",
+              "type": {
+                "text": "Element"
+              }
+            }
+          ],
+          "description": "Builds a CSS attribute selector string from FCDA reference attributes."
+        },
+        {
+          "kind": "function",
+          "name": "getControlReferences",
+          "return": {
+            "type": {
+              "text": "string"
+            }
+          },
+          "parameters": [
+            {
+              "name": "extRef",
+              "type": {
+                "text": "Element"
+              }
+            }
+          ],
+          "description": "Builds a CSS attribute selector string from control reference attributes."
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "getFcdaReferences",
+          "declaration": {
+            "name": "getFcdaReferences",
+            "module": "src/foundation/ied.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "getControlReferences",
+          "declaration": {
+            "name": "getControlReferences",
+            "module": "src/foundation/ied.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/foundation/scl.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "SCL_NAMESPACE",
+          "type": {
+            "text": "string"
+          },
+          "default": "'http://www.iec.ch/61850/2003/SCL'",
+          "description": "SCL XML namespace URI."
+        },
+        {
+          "kind": "function",
+          "name": "getSclSchemaVersion",
+          "return": {
+            "type": {
+              "text": "SclEdition"
+            }
+          },
+          "parameters": [
+            {
+              "name": "doc",
+              "type": {
+                "text": "Document"
+              }
+            }
+          ],
+          "description": "Derives the SCL schema edition from the root element attributes."
+        },
+        {
+          "kind": "function",
+          "name": "getNameAttribute",
+          "return": {
+            "type": {
+              "text": ""
+            }
+          },
+          "parameters": [
+            {
+              "name": "element",
+              "type": {
+                "text": "Element"
+              }
+            }
+          ],
+          "description": "Extracts the `name` attribute from an element."
+        },
+        {
+          "kind": "function",
+          "name": "getDescriptionAttribute",
+          "return": {
+            "type": {
+              "text": ""
+            }
+          },
+          "parameters": [
+            {
+              "name": "element",
+              "type": {
+                "text": "Element"
+              }
+            }
+          ],
+          "description": "Extracts the `desc` attribute from an element."
+        },
+        {
+          "kind": "function",
+          "name": "compareNames",
+          "return": {
+            "type": {
+              "text": "number"
+            }
+          },
+          "parameters": [
+            {
+              "name": "a",
+              "type": {
+                "text": "Element | string"
+              }
+            },
+            {
+              "name": "b",
+              "type": {
+                "text": "Element | string"
+              }
+            }
+          ],
+          "description": "Locale-aware comparison of elements or strings by `name` attribute."
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "SCL_NAMESPACE",
+          "declaration": {
+            "name": "SCL_NAMESPACE",
+            "module": "src/foundation/scl.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "getSclSchemaVersion",
+          "declaration": {
+            "name": "getSclSchemaVersion",
+            "module": "src/foundation/scl.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "getNameAttribute",
+          "declaration": {
+            "name": "getNameAttribute",
+            "module": "src/foundation/scl.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "getDescriptionAttribute",
+          "declaration": {
+            "name": "getDescriptionAttribute",
+            "module": "src/foundation/scl.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "compareNames",
+          "declaration": {
+            "name": "compareNames",
+            "module": "src/foundation/scl.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/foundation/subscription.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "newViewEvent",
+          "return": {
+            "type": {
+              "text": "ViewEvent"
+            }
+          },
+          "parameters": [
+            {
+              "name": "view",
+              "type": {
+                "text": "View"
+              }
+            },
+            {
+              "name": "eventInitDict",
+              "optional": true,
+              "type": {
+                "text": "CustomEventInit<ViewDetail>"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "newIEDSelectEvent",
+          "return": {
+            "type": {
+              "text": "IEDSelectEvent"
+            }
+          },
+          "parameters": [
+            {
+              "name": "ied",
+              "type": {
+                "text": "Element | undefined"
+              }
+            },
+            {
+              "name": "eventInitDict",
+              "optional": true,
+              "type": {
+                "text": "CustomEventInit<IEDSelectDetail>"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "newFcdaSelectEvent",
+          "return": {
+            "type": {
+              "text": "FcdaSelectEvent"
+            }
+          },
+          "parameters": [
+            {
+              "name": "control",
+              "type": {
+                "text": "Element | undefined"
+              }
+            },
+            {
+              "name": "fcda",
+              "type": {
+                "text": "Element | undefined"
+              }
+            },
+            {
+              "name": "eventInitDict",
+              "optional": true,
+              "type": {
+                "text": "CustomEventInit<FcdaSelectDetail>"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "newSubscriptionChangedEvent",
+          "return": {
+            "type": {
+              "text": "SubscriptionChangedEvent"
+            }
+          },
+          "parameters": [
+            {
+              "name": "control",
+              "type": {
+                "text": "Element | undefined"
+              }
+            },
+            {
+              "name": "fcda",
+              "type": {
+                "text": "Element | undefined"
+              }
+            },
+            {
+              "name": "eventInitDict",
+              "optional": true,
+              "type": {
+                "text": "CustomEventInit<SubscriptionChangedDetail>"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "getFcdaTitleValue",
+          "return": {
+            "type": {
+              "text": "string"
+            }
+          },
+          "parameters": [
+            {
+              "name": "fcdaElement",
+              "type": {
+                "text": "Element"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "getFcdaSubtitleValue",
+          "return": {
+            "type": {
+              "text": "string"
+            }
+          },
+          "parameters": [
+            {
+              "name": "fcdaElement",
+              "type": {
+                "text": "Element"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "getExtRef",
+          "return": {
+            "type": {
+              "text": "Element | undefined"
+            }
+          },
+          "parameters": [
+            {
+              "name": "parentInputs",
+              "type": {
+                "text": "Element"
+              }
+            },
+            {
+              "name": "fcda",
+              "type": {
+                "text": "Element"
+              }
+            },
+            {
+              "name": "control",
+              "type": {
+                "text": "Element | undefined"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "getFirstSubscribedExtRef",
+          "return": {
+            "type": {
+              "text": ""
+            }
+          },
+          "parameters": [
+            {
+              "name": "publishedControlBlock",
+              "type": {
+                "text": "Element"
+              },
+              "description": "the control block SCL element in the publishing IED."
+            },
+            {
+              "name": "subscribingIed",
+              "type": {
+                "text": "Element"
+              },
+              "description": "the subscribing IED SCL element."
+            }
+          ],
+          "description": "Find the first ExtRef SCL element given a control and a subscribing IED.\nThis is a query-only function used by renderSubscriber in MSG plugins."
+        },
+        {
+          "kind": "function",
+          "name": "getSupervisionCbRefs",
+          "return": {
+            "type": {
+              "text": ""
+            }
+          },
+          "parameters": [
+            {
+              "name": "ied",
+              "type": {
+                "text": "Element"
+              },
+              "description": "IED SCL element."
+            },
+            {
+              "name": "cbTagName",
+              "type": {
+                "text": "string"
+              },
+              "description": "Either GSEControl or (defaults to) SampledValueControl."
+            },
+            {
+              "description": "If true, return the first element found",
+              "name": "firstOnly"
+            }
+          ],
+          "description": "Return Val elements within an LGOS/LSVS instance for a particular IED and control block type."
+        },
+        {
+          "kind": "function",
+          "name": "getSupervisionCbRefs",
+          "return": {
+            "type": {
+              "text": "Element | null"
+            }
+          },
+          "parameters": [
+            {
+              "name": "ied",
+              "type": {
+                "text": "Element"
+              }
+            },
+            {
+              "name": "cbTagName",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "firstOnly",
+              "type": {
+                "text": "boolean"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "getSupervisionCbRefs",
+          "return": {
+            "type": {
+              "text": "Element[] | Element | null"
+            }
+          },
+          "parameters": [
+            {
+              "name": "ied",
+              "type": {
+                "text": "Element"
+              }
+            },
+            {
+              "name": "cbTagName",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "firstOnly",
+              "optional": true,
+              "type": {
+                "text": "boolean"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "getExistingSupervision",
+          "return": {
+            "type": {
+              "text": ""
+            }
+          },
+          "parameters": [
+            {
+              "name": "extRef",
+              "type": {
+                "text": "Element | null"
+              },
+              "description": "The extRef SCL element in the subscribing IED."
+            }
+          ],
+          "description": "Returns the subscriber's supervision LN for a given control block and extRef element"
+        },
+        {
+          "kind": "variable",
+          "name": "serviceTypes",
+          "type": {
+            "text": "Partial<Record<string, string>>"
+          },
+          "default": "{ ReportControl: 'Report', GSEControl: 'GOOSE', SampledValueControl: 'SMV', }"
+        },
+        {
+          "kind": "function",
+          "name": "getOrderedIeds",
+          "return": {
+            "type": {
+              "text": "Element[]"
+            }
+          },
+          "parameters": [
+            {
+              "name": "doc",
+              "type": {
+                "text": "XMLDocument"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "description": "",
+          "name": "SubscriberListContainer",
+          "members": [
+            {
+              "kind": "field",
+              "name": "subscribedElements",
+              "type": {
+                "text": "ListElement[]"
+              },
+              "default": "[]",
+              "description": "List holding all current subscribed Elements."
+            },
+            {
+              "kind": "field",
+              "name": "availableElements",
+              "type": {
+                "text": "ListElement[]"
+              },
+              "default": "[]",
+              "description": "List holding all current available Elements which are not subscribed."
+            },
+            {
+              "kind": "field",
+              "name": "currentSelectedIed",
+              "type": {
+                "text": "Element | undefined"
+              },
+              "description": "Current selected IED (when in Subscriber view)"
+            },
+            {
+              "kind": "field",
+              "name": "currentUsedDataset",
+              "type": {
+                "text": "Element | undefined | null"
+              },
+              "description": "The current used dataset for subscribing / unsubscribing"
+            },
+            {
+              "kind": "field",
+              "name": "subscriberWrapper",
+              "type": {
+                "text": "Element"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "resetElements",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "customElement": true
+        },
+        {
+          "kind": "variable",
+          "name": "styles",
+          "default": "css` :host(.moving) section { opacity: 0.3; } section { background-color: var(--mdc-theme-surface); transition: all 200ms linear; outline-color: var(--mdc-theme-primary); outline-style: solid; outline-width: 0px; opacity: 1; } section:focus { box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2); } section:focus-within { outline-width: 2px; transition: all 250ms linear; } h1, h2, h3 { color: var(--mdc-theme-on-surface); font-family: 'Roboto', sans-serif; font-weight: 300; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin: 0px; line-height: 48px; padding-left: 0.3em; transition: background-color 150ms linear; } section:focus-within > h1, section:focus-within > h2, section:focus-within > h3 { color: var(--mdc-theme-surface); background-color: var(--mdc-theme-primary); transition: background-color 200ms linear; } h1 > nav, h2 > nav, h3 > nav, h1 > abbr > oscd-icon-button, h2 > abbr > oscd-icon-button, h3 > abbr > oscd-icon-button { float: right; } abbr[title] { border-bottom: none !important; cursor: inherit !important; text-decoration: none !important; } oscd-list-item[type='text'] { font-weight: 500; } `",
+          "description": "Common `CSS` styles used by DataTypeTemplate subeditors"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "newViewEvent",
+          "declaration": {
+            "name": "newViewEvent",
+            "module": "src/foundation/subscription.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "newIEDSelectEvent",
+          "declaration": {
+            "name": "newIEDSelectEvent",
+            "module": "src/foundation/subscription.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "newFcdaSelectEvent",
+          "declaration": {
+            "name": "newFcdaSelectEvent",
+            "module": "src/foundation/subscription.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "newSubscriptionChangedEvent",
+          "declaration": {
+            "name": "newSubscriptionChangedEvent",
+            "module": "src/foundation/subscription.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "getFcdaTitleValue",
+          "declaration": {
+            "name": "getFcdaTitleValue",
+            "module": "src/foundation/subscription.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "getFcdaSubtitleValue",
+          "declaration": {
+            "name": "getFcdaSubtitleValue",
+            "module": "src/foundation/subscription.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "getExtRef",
+          "declaration": {
+            "name": "getExtRef",
+            "module": "src/foundation/subscription.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "getFirstSubscribedExtRef",
+          "declaration": {
+            "name": "getFirstSubscribedExtRef",
+            "module": "src/foundation/subscription.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "getSupervisionCbRefs",
+          "declaration": {
+            "name": "getSupervisionCbRefs",
+            "module": "src/foundation/subscription.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "getSupervisionCbRefs",
+          "declaration": {
+            "name": "getSupervisionCbRefs",
+            "module": "src/foundation/subscription.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "getSupervisionCbRefs",
+          "declaration": {
+            "name": "getSupervisionCbRefs",
+            "module": "src/foundation/subscription.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "getExistingSupervision",
+          "declaration": {
+            "name": "getExistingSupervision",
+            "module": "src/foundation/subscription.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "serviceTypes",
+          "declaration": {
+            "name": "serviceTypes",
+            "module": "src/foundation/subscription.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "getOrderedIeds",
+          "declaration": {
+            "name": "getOrderedIeds",
+            "module": "src/foundation/subscription.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "SubscriberListContainer",
+          "declaration": {
+            "name": "SubscriberListContainer",
+            "module": "src/foundation/subscription.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "styles",
+          "declaration": {
+            "name": "styles",
+            "module": "src/foundation/subscription.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/subscription/ied-list.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "IedList",
+          "members": [
+            {
+              "kind": "field",
+              "name": "scopedElements",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ 'oscd-icon': OscdIcon, 'oscd-list-item': OscdListItem, 'filtered-list': FilteredList, }"
+            },
+            {
+              "kind": "field",
+              "name": "doc",
+              "type": {
+                "text": "XMLDocument"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "docVersion",
+              "type": {
+                "text": "unknown | undefined"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "serviceType",
+              "type": {
+                "text": "'goose' | 'smv' | undefined"
+              },
+              "attribute": "serviceType"
+            },
+            {
+              "kind": "field",
+              "name": "onOpenDocReset",
+              "privacy": "private"
+            },
+            {
+              "kind": "method",
+              "name": "onIedSelect",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "element",
+                  "type": {
+                    "text": "Element"
+                  }
+                }
+              ]
+            }
+          ],
+          "attributes": [
+            {
+              "name": "serviceType",
+              "type": {
+                "text": "'goose' | 'smv' | undefined"
+              },
+              "fieldName": "serviceType"
+            }
+          ],
+          "mixins": [
+            {
+              "name": "ScopedElementsMixin",
+              "package": "@open-wc/scoped-elements/lit-element.js"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "IedList",
+          "declaration": {
+            "name": "IedList",
+            "module": "src/subscription/ied-list.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/foundation/shared/control-block-helpers.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "getAssociatedDataSet",
+          "return": {
+            "type": {
+              "text": "Element | null"
+            }
+          },
+          "parameters": [
+            {
+              "name": "control",
+              "type": {
+                "text": "Element"
+              }
+            }
+          ],
+          "description": "Returns the DataSet referenced by a control block's `datSet` attribute.\nThe DataSet must be a sibling under the same LN0."
+        },
+        {
+          "kind": "function",
+          "name": "getAssociatedGSE",
+          "return": {
+            "type": {
+              "text": "Element | null"
+            }
+          },
+          "parameters": [
+            {
+              "name": "control",
+              "type": {
+                "text": "Element"
+              }
+            }
+          ],
+          "description": "Returns the GSE communication element associated with a GSEControl.\nThe GSE is located in Communication > SubNetwork > ConnectedAP and matched\nby iedName, apName, ldInst, and cbName."
+        },
+        {
+          "kind": "function",
+          "name": "isDataSetSingleUse",
+          "return": {
+            "type": {
+              "text": "boolean"
+            }
+          },
+          "parameters": [
+            {
+              "name": "dataSet",
+              "type": {
+                "text": "Element"
+              }
+            }
+          ],
+          "description": "Returns true if no other control block under the same LN0 references\nthe given DataSet. A single-use DataSet can be safely removed together\nwith its control block."
+        },
+        {
+          "kind": "function",
+          "name": "buildRemoveEdits",
+          "return": {
+            "type": {
+              "text": "EditV2[]"
+            }
+          },
+          "parameters": [
+            {
+              "name": "control",
+              "type": {
+                "text": "Element"
+              }
+            }
+          ],
+          "description": "Builds an EditV2 array that removes a GSEControl and its associated\nelements: the DataSet (if single-use) and the GSE communication element."
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "getAssociatedDataSet",
+          "declaration": {
+            "name": "getAssociatedDataSet",
+            "module": "src/foundation/shared/control-block-helpers.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "getAssociatedGSE",
+          "declaration": {
+            "name": "getAssociatedGSE",
+            "module": "src/foundation/shared/control-block-helpers.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "isDataSetSingleUse",
+          "declaration": {
+            "name": "isDataSetSingleUse",
+            "module": "src/foundation/shared/control-block-helpers.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "buildRemoveEdits",
+          "declaration": {
+            "name": "buildRemoveEdits",
+            "module": "src/foundation/shared/control-block-helpers.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/subscription/goose/foundation.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "newGOOSESelectEvent",
+          "return": {
+            "type": {
+              "text": "GOOSESelectEvent"
+            }
+          },
+          "parameters": [
+            {
+              "name": "gseControl",
+              "type": {
+                "text": "Element | undefined"
+              }
+            },
+            {
+              "name": "dataset",
+              "type": {
+                "text": "Element | undefined"
+              }
+            },
+            {
+              "name": "eventInitDict",
+              "optional": true,
+              "type": {
+                "text": "CustomEventInit<GOOSESelectDetail>"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "newGooseSubscriptionEvent",
+          "return": {
+            "type": {
+              "text": "GooseSubscriptionEvent"
+            }
+          },
+          "parameters": [
+            {
+              "name": "element",
+              "type": {
+                "text": "Element"
+              }
+            },
+            {
+              "name": "subscribeStatus",
+              "type": {
+                "text": "SubscribeStatus"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "newGOOSESelectEvent",
+          "declaration": {
+            "name": "newGOOSESelectEvent",
+            "module": "src/subscription/goose/foundation.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "newGooseSubscriptionEvent",
+          "declaration": {
+            "name": "newGooseSubscriptionEvent",
+            "module": "src/subscription/goose/foundation.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/subscription/goose/goose-list.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "GooseList",
+          "members": [
+            {
+              "kind": "field",
+              "name": "scopedElements",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ 'oscd-icon': OscdIcon, 'oscd-list-item': OscdListItem, 'oscd-icon-button': OscdIconButton, 'oscd-divider': OscdDivider, 'oscd-menu': OscdMenu, 'oscd-menu-item': OscdMenuItem, 'filtered-list': FilteredList, }"
+            },
+            {
+              "kind": "field",
+              "name": "onOpenDocReset",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "doc",
+              "type": {
+                "text": "XMLDocument"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "docVersion",
+              "type": {
+                "text": "unknown | undefined"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "menuControlElement",
+              "type": {
+                "text": "Element | undefined"
+              },
+              "privacy": "private",
+              "description": "The control element that the context menu currently targets."
+            },
+            {
+              "kind": "field",
+              "name": "controlBlockMenu",
+              "type": {
+                "text": "OscdMenu"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "method",
+              "name": "onSelect",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "gseControl",
+                  "type": {
+                    "text": "Element"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "openControlMenu",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "Event"
+                  }
+                },
+                {
+                  "name": "control",
+                  "type": {
+                    "text": "Element"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "onMenuEdit",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "onMenuEditDataSet",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "onMenuEditCommunication",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "onMenuRemove",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "renderGoose",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "gseControl",
+                  "type": {
+                    "text": "Element"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "renderControlBlockMenu",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              }
+            }
+          ],
+          "mixins": [
+            {
+              "name": "ScopedElementsMixin",
+              "package": "@open-wc/scoped-elements/lit-element.js"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "GooseList",
+          "declaration": {
+            "name": "GooseList",
+            "module": "src/subscription/goose/goose-list.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/subscription/goose/subscriber-list.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "An sub element for subscribing and unsubscribing IEDs to GOOSE messages.",
+          "name": "SubscriberListGoose",
+          "members": [
+            {
+              "kind": "field",
+              "name": "scopedElements",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ 'oscd-icon': OscdIcon, 'oscd-list': OscdList, 'oscd-list-item': OscdListItem, 'oscd-divider': OscdDivider, 'filtered-list': FilteredList, }"
+            },
+            {
+              "kind": "field",
+              "name": "doc",
+              "type": {
+                "text": "XMLDocument"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "docVersion",
+              "type": {
+                "text": "unknown | undefined"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "currentSelectedGseControl",
+              "type": {
+                "text": "Element | undefined"
+              },
+              "description": "Current selected GOOSE message (when in GOOSE Publisher view)"
+            },
+            {
+              "kind": "field",
+              "name": "currentGooseIedName",
+              "type": {
+                "text": "string | undefined | null"
+              },
+              "description": "The name of the IED belonging to the current selected GOOSE"
+            },
+            {
+              "kind": "field",
+              "name": "onIEDSelectEvent",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "onGOOSESelectEvent",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "onGooseSubscriptionEvent",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "onViewChange",
+              "privacy": "private"
+            },
+            {
+              "kind": "method",
+              "name": "subscribeIed",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "ied",
+                  "type": {
+                    "text": "Element"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "unsubscribeIed",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "ied",
+                  "type": {
+                    "text": "Element"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "renderSubscriber",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "status",
+                  "type": {
+                    "text": "SubscribeStatus"
+                  }
+                },
+                {
+                  "name": "element",
+                  "type": {
+                    "text": "Element"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "renderUnSubscribers",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "elements",
+                  "type": {
+                    "text": "ListElement[]"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "renderPartiallySubscribers",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "elements",
+                  "type": {
+                    "text": "ListElement[]"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "renderFullSubscribers",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "renderTitle",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "subscribedElements",
+              "type": {
+                "text": "ListElement[]"
+              },
+              "default": "[]",
+              "description": "List holding all current subscribed Elements.",
+              "inheritedFrom": {
+                "name": "SubscriberListContainer",
+                "module": "src/foundation/subscription.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "availableElements",
+              "type": {
+                "text": "ListElement[]"
+              },
+              "default": "[]",
+              "description": "List holding all current available Elements which are not subscribed.",
+              "inheritedFrom": {
+                "name": "SubscriberListContainer",
+                "module": "src/foundation/subscription.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "currentSelectedIed",
+              "type": {
+                "text": "Element | undefined"
+              },
+              "description": "Current selected IED (when in Subscriber view)",
+              "inheritedFrom": {
+                "name": "SubscriberListContainer",
+                "module": "src/foundation/subscription.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "currentUsedDataset",
+              "type": {
+                "text": "Element | undefined | null"
+              },
+              "description": "The current used dataset for subscribing / unsubscribing",
+              "inheritedFrom": {
+                "name": "SubscriberListContainer",
+                "module": "src/foundation/subscription.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "subscriberWrapper",
+              "type": {
+                "text": "Element"
+              },
+              "inheritedFrom": {
+                "name": "SubscriberListContainer",
+                "module": "src/foundation/subscription.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "resetElements",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "inheritedFrom": {
+                "name": "SubscriberListContainer",
+                "module": "src/foundation/subscription.ts"
+              }
+            }
+          ],
+          "mixins": [
+            {
+              "name": "ScopedElementsMixin",
+              "package": "@open-wc/scoped-elements/lit-element.js"
+            }
+          ],
+          "superclass": {
+            "name": "SubscriberListContainer",
+            "module": "/src/foundation/subscription.js"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "SubscriberListGoose",
+          "declaration": {
+            "name": "SubscriberListGoose",
+            "module": "src/subscription/goose/subscriber-list.ts"
+          }
+        }
+      ]
+    }
+  ]
+}
