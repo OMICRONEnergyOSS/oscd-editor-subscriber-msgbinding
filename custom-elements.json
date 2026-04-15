@@ -110,7 +110,7 @@
                 "text": "object"
               },
               "static": true,
-              "default": "{ 'oscd-fab': OscdFab, 'oscd-icon': OscdIcon, 'oscd-outlined-segmented-button': OscdOutlinedSegmentedButton, 'oscd-outlined-segmented-button-set': OscdOutlinedSegmentedButtonSet, 'subscriber-list': SubscriberList, 'control-block-list': ControlBlockList, 'ied-list': IedList, 'oscd-scl-dialogs': OscdSclDialogs, }"
+              "default": "{ 'oscd-icon': OscdIcon, 'oscd-outlined-segmented-button': OscdOutlinedSegmentedButton, 'oscd-outlined-segmented-button-set': OscdOutlinedSegmentedButtonSet, 'subscriber-list': SubscriberList, 'control-block-list': ControlBlockList, 'ied-list': IedList, 'oscd-scl-dialogs': OscdSclDialogs, }"
             },
             {
               "kind": "field",
@@ -174,26 +174,25 @@
             },
             {
               "kind": "method",
-              "name": "toggleView",
+              "name": "setView",
               "privacy": "private",
               "return": {
                 "type": {
                   "text": "void"
                 }
-              }
-            },
-            {
-              "kind": "field",
-              "name": "fabTooltip",
-              "type": {
-                "text": "string"
               },
-              "privacy": "private",
-              "readonly": true
+              "parameters": [
+                {
+                  "name": "newView",
+                  "type": {
+                    "text": "View"
+                  }
+                }
+              ]
             },
             {
               "kind": "method",
-              "name": "renderPublisherList",
+              "name": "renderLeftColumn",
               "privacy": "private",
               "return": {
                 "type": {
@@ -331,15 +330,6 @@
             {
               "kind": "field",
               "name": "controlIcon",
-              "type": {
-                "text": "string"
-              },
-              "privacy": "private",
-              "readonly": true
-            },
-            {
-              "kind": "field",
-              "name": "titleText",
               "type": {
                 "text": "string"
               },
@@ -1717,7 +1707,7 @@
         {
           "kind": "variable",
           "name": "styles",
-          "default": "css` :host(.moving) section { opacity: 0.3; } section { background-color: var(--mdc-theme-surface); transition: all 200ms linear; outline-color: var(--mdc-theme-primary); outline-style: solid; outline-width: 0px; opacity: 1; } section:focus { box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2); } section:focus-within { outline-width: 2px; transition: all 250ms linear; } h1, h2, h3 { color: var(--mdc-theme-on-surface); font-family: 'Roboto', sans-serif; font-weight: 300; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin: 0px; line-height: 48px; padding-left: 0.3em; transition: background-color 150ms linear; } section:focus-within > h1, section:focus-within > h2, section:focus-within > h3 { color: var(--mdc-theme-surface); background-color: var(--mdc-theme-primary); transition: background-color 200ms linear; } h1 > nav, h2 > nav, h3 > nav, h1 > abbr > oscd-icon-button, h2 > abbr > oscd-icon-button, h3 > abbr > oscd-icon-button { float: right; } abbr[title] { border-bottom: none !important; cursor: inherit !important; text-decoration: none !important; } oscd-list-item[type='text'] { font-weight: 500; } `",
+          "default": "css` :host(.moving) section { opacity: 0.3; } section { background-color: var(--mdc-theme-surface); transition: all 200ms linear; outline-color: var(--mdc-theme-primary); outline-style: solid; outline-width: 0px; opacity: 1; } h2 { color: var(--mdc-theme-on-surface); font-family: 'Roboto', sans-serif; font-weight: 300; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin: 0px; line-height: 48px; padding-left: 0.3em; transition: background-color 150ms linear; } abbr[title] { border-bottom: none !important; cursor: inherit !important; text-decoration: none !important; } oscd-list-item[type='text'] { font-weight: 500; } `",
           "description": "Common `CSS` styles used by DataTypeTemplate subeditors"
         }
       ],
