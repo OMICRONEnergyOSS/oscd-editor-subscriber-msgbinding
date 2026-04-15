@@ -1,7 +1,7 @@
 {
   "name": "@omicronenergy/oscd-editor-subscriber-msgbinding",
   "version": "0.0.0",
-  "description": "OpenSCD Editor Plugin for GOOSE Subscriber Message Binding with IEC 61850 SCL files.",
+  "description": "OpenSCD Editor Plugin for GOOSE and SMV Subscriber Message Binding with IEC 61850 SCL files.",
   "type": "module",
   "repository": {
     "type": "git",
@@ -15,6 +15,8 @@
     "OpenSCD",
     "iec61850",
     "GOOSE",
+    "SMV",
+    "sampled-values",
     "subscriber",
     "message-binding"
   ],
@@ -47,9 +49,10 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@lit-labs/virtualizer": "^2.1.1",
     "@lit/localize": "^0.12.2",
     "@omicronenergy/oscd-scl-dialogs": "^0.0.12",
-    "@omicronenergy/oscd-ui": "^0.0.11",
+    "@omicronenergy/oscd-ui": "file:../oscd-ui",
     "@omicronenergy/oscd-shell": "^0.0.13",
     "@open-wc/scoped-elements": "^3.0.6",
     "@openscd/oscd-api": "^0.1.6",

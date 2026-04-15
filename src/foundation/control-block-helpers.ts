@@ -1,9 +1,9 @@
 /**
- * Shared helper functions for control block context menu actions.
+ * Helper functions for control block context menu actions.
  *
  * These helpers navigate the SCL document structure to find elements
- * associated with a given control block (GSEControl). They are used
- * by the context menu to open edit dialogs and build remove edits.
+ * associated with a given control block. They are used by the context menu
+ * to open edit dialogs and build remove edits.
  */
 
 import type { EditV2, Remove } from '@openscd/oscd-api';
@@ -14,7 +14,9 @@ import type { EditV2, Remove } from '@openscd/oscd-api';
  */
 export function getAssociatedDataSet(control: Element): Element | null {
   const datSet = control.getAttribute('datSet');
-  if (!datSet) return null;
+  if (!datSet) {
+    return null;
+  }
   return (
     control
       .closest('LN0')
@@ -23,20 +25,41 @@ export function getAssociatedDataSet(control: Element): Element | null {
 }
 
 /**
- * Returns the GSE communication element associated with a GSEControl.
- * The GSE is located in Communication > SubNetwork > ConnectedAP and matched
+ * Returns the communication element associated with a control block.
+ * The element is located in Communication > SubNetwork > ConnectedAP and matched
  * by iedName, apName, ldInst, and cbName.
  */
-export function getAssociatedGSE(control: Element): Element | null {
+export function getAssociatedCommunication(control: Element): Element | null {
   const iedName = control.closest('IED')?.getAttribute('name');
   const apName = control.closest('AccessPoint')?.getAttribute('name');
   const ldInst = control.closest('LDevice')?.getAttribute('inst');
   const cbName = control.getAttribute('name');
-  if (!iedName || !apName || !ldInst || !cbName) return null;
+  if (!iedName || !apName || !ldInst || !cbName) {
+    return null;
+  }
+  const communicationTag =
+    control.tagName === 'GSEControl'
+      ? 'GSE'
+      : control.tagName === 'SampledValueControl'
+        ? 'SMV'
+        : null;
+  if (!communicationTag) {
+    return null;
+  }
   const doc = control.ownerDocument;
   return doc.querySelector(
-    `Communication > SubNetwork > ConnectedAP[iedName="${iedName}"][apName="${apName}"] > GSE[ldInst="${ldInst}"][cbName="${cbName}"]`,
+    `Communication > SubNetwork > ConnectedAP[iedName="${iedName}"][apName="${apName}"] > ${communicationTag}[ldInst="${ldInst}"][cbName="${cbName}"]`,
   );
+}
+
+/**
+ * Returns the SmvOpts child element when editing a SampledValueControl.
+ */
+export function getAssociatedSmvOpts(control: Element): Element | null {
+  if (control.tagName === 'SampledValueControl') {
+    return control.querySelector(':scope > SmvOpts');
+  }
+  return null;
 }
 
 /**
@@ -47,14 +70,16 @@ export function getAssociatedGSE(control: Element): Element | null {
 export function isDataSetSingleUse(dataSet: Element): boolean {
   const name = dataSet.getAttribute('name');
   const ln0 = dataSet.closest('LN0');
-  if (!name || !ln0) return true;
+  if (!name || !ln0) {
+    return true;
+  }
   const refs = ln0.querySelectorAll(`:scope > *[datSet="${name}"]`);
   return refs.length <= 1;
 }
 
 /**
- * Builds an EditV2 array that removes a GSEControl and its associated
- * elements: the DataSet (if single-use) and the GSE communication element.
+ * Builds an EditV2 array that removes a control block and its associated
+ * elements: the DataSet (if single-use) and its communication element.
  */
 export function buildRemoveEdits(control: Element): EditV2[] {
   const edits: Remove[] = [{ node: control }];
@@ -64,9 +89,9 @@ export function buildRemoveEdits(control: Element): EditV2[] {
     edits.push({ node: dataSet });
   }
 
-  const gse = getAssociatedGSE(control);
-  if (gse) {
-    edits.push({ node: gse });
+  const communication = getAssociatedCommunication(control);
+  if (communication) {
+    edits.push({ node: communication });
   }
 
   return edits;

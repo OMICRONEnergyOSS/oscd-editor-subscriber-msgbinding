@@ -4,6 +4,83 @@
   "modules": [
     {
       "kind": "javascript-module",
+      "path": "src/foundation.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "newControlSelectEvent",
+          "return": {
+            "type": {
+              "text": "ControlSelectEvent"
+            }
+          },
+          "parameters": [
+            {
+              "name": "controlBlock",
+              "type": {
+                "text": "Element | undefined"
+              }
+            },
+            {
+              "name": "dataset",
+              "type": {
+                "text": "Element | undefined"
+              }
+            },
+            {
+              "name": "eventInitDict",
+              "optional": true,
+              "type": {
+                "text": "CustomEventInit<ControlSelectDetail>"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "newControlSubscriptionEvent",
+          "return": {
+            "type": {
+              "text": "ControlSubscriptionEvent"
+            }
+          },
+          "parameters": [
+            {
+              "name": "element",
+              "type": {
+                "text": "Element"
+              }
+            },
+            {
+              "name": "subscribeStatus",
+              "type": {
+                "text": "SubscribeStatus"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "newControlSelectEvent",
+          "declaration": {
+            "name": "newControlSelectEvent",
+            "module": "src/foundation.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "newControlSubscriptionEvent",
+          "declaration": {
+            "name": "newControlSubscriptionEvent",
+            "module": "src/foundation.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/oscd-editor-subscriber-msgbinding.spec.ts",
       "declarations": [],
       "exports": [
@@ -23,7 +100,7 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "An editor plugin for subscribing IEDs to GOOSE messages.",
+          "description": "An editor plugin for subscribing IEDs to GOOSE and SMV messages.",
           "name": "OscdEditorSubscriberMsgBinding",
           "members": [
             {
@@ -33,7 +110,7 @@
                 "text": "object"
               },
               "static": true,
-              "default": "{ 'oscd-radio': OscdRadio, 'subscriber-list-goose': SubscriberListGoose, 'goose-list': GooseList, 'ied-list': IedList, 'oscd-scl-dialogs': OscdSclDialogs, }"
+              "default": "{ 'oscd-fab': OscdFab, 'oscd-icon': OscdIcon, 'oscd-outlined-segmented-button': OscdOutlinedSegmentedButton, 'oscd-outlined-segmented-button-set': OscdOutlinedSegmentedButtonSet, 'subscriber-list': SubscriberList, 'control-block-list': ControlBlockList, 'ied-list': IedList, 'oscd-scl-dialogs': OscdSclDialogs, }"
             },
             {
               "kind": "field",
@@ -51,17 +128,11 @@
             },
             {
               "kind": "field",
-              "name": "goosePublisherView",
+              "name": "serviceType",
               "type": {
-                "text": "HTMLElement"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "gooseSubscriberView",
-              "type": {
-                "text": "HTMLElement"
-              }
+                "text": "ServiceType"
+              },
+              "attribute": "serviceType"
             },
             {
               "kind": "field",
@@ -82,6 +153,72 @@
               "kind": "field",
               "name": "handleEditDialogEvent",
               "privacy": "private"
+            },
+            {
+              "kind": "method",
+              "name": "onServiceTypeChange",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "serviceType",
+                  "type": {
+                    "text": "ServiceType"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "toggleView",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "fabTooltip",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "private",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "renderPublisherList",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "renderSubscriberList",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "serviceType",
+              "type": {
+                "text": "ServiceType"
+              },
+              "fieldName": "serviceType"
             }
           ],
           "mixins": [
@@ -111,12 +248,12 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/foundation/filtered-list.ts",
+      "path": "src/components/control-block-list.ts",
       "declarations": [
         {
           "kind": "class",
-          "description": "A slot-based filterable list. Renders a search input above an `<oscd-list>`\nand hides slotted items whose text content does not match the search query.\n\nItems can provide searchable text via their `data-value` attribute or via\ntheir `textContent`. Items without either are always shown.",
-          "name": "FilteredList",
+          "description": "",
+          "name": "ControlBlockList",
           "members": [
             {
               "kind": "field",
@@ -125,38 +262,140 @@
                 "text": "object"
               },
               "static": true,
-              "default": "{ 'oscd-icon': OscdIcon, 'oscd-list': OscdList, 'oscd-outlined-text-field': OscdOutlinedTextField, }"
+              "default": "{ 'oscd-icon': OscdIcon, 'oscd-list-item': OscdListItem, 'oscd-icon-button': OscdIconButton, 'oscd-divider': OscdDivider, 'oscd-menu': OscdMenu, 'oscd-menu-item': OscdMenuItem, 'virtualized-filtered-list': VirtualizedFilteredList, }"
             },
             {
               "kind": "field",
-              "name": "activatable",
+              "name": "doc",
               "type": {
-                "text": "boolean"
+                "text": "XMLDocument"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "docVersion",
+              "type": {
+                "text": "unknown | undefined"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "serviceType",
+              "type": {
+                "text": "ServiceType"
               },
-              "default": "false",
-              "description": "Not used functionally but preserved for API compatibility with legacy callers.",
-              "attribute": "activatable"
+              "default": "'goose'",
+              "attribute": "serviceType"
             },
             {
               "kind": "field",
-              "name": "searchValue",
+              "name": "menuControlElement",
               "type": {
-                "text": "string"
-              },
-              "privacy": "private",
-              "default": "''"
-            },
-            {
-              "kind": "field",
-              "name": "searchField",
-              "type": {
-                "text": "HTMLElement & { value: string } | undefined"
+                "text": "Element | undefined"
               },
               "privacy": "private"
             },
             {
+              "kind": "field",
+              "name": "controlBlockMenu",
+              "type": {
+                "text": "OscdMenu"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "selectedControl",
+              "type": {
+                "text": "Element | undefined"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "selectedDataSet",
+              "type": {
+                "text": "Element | undefined | null"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "controlSelector",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "private",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "controlIcon",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "private",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "titleText",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "private",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "onOpenDocReset",
+              "privacy": "private"
+            },
+            {
               "kind": "method",
-              "name": "onInput",
+              "name": "onSelect",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "control",
+                  "type": {
+                    "text": "Element"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "openControlMenu",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "Event"
+                  }
+                },
+                {
+                  "name": "control",
+                  "type": {
+                    "text": "Element"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "onMenuEdit",
               "privacy": "private",
               "return": {
                 "type": {
@@ -166,24 +405,106 @@
             },
             {
               "kind": "method",
-              "name": "applyFilter",
+              "name": "onMenuEditDataSet",
               "privacy": "private",
               "return": {
                 "type": {
                   "text": "void"
                 }
               }
+            },
+            {
+              "kind": "method",
+              "name": "onMenuEditSmvOpts",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "onMenuEditCommunication",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "onMenuRemove",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "renderControl",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "control",
+                  "type": {
+                    "text": "Element"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "renderControlBlockMenu",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "buildRows",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "ControlBlockRow[]"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "renderRow",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "matchRow",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "rowKey",
+              "privacy": "private"
             }
           ],
           "attributes": [
             {
-              "name": "activatable",
+              "name": "serviceType",
               "type": {
-                "text": "boolean"
+                "text": "ServiceType"
               },
-              "default": "false",
-              "description": "Not used functionally but preserved for API compatibility with legacy callers.",
-              "fieldName": "activatable"
+              "default": "'goose'",
+              "fieldName": "serviceType"
             }
           ],
           "mixins": [
@@ -202,10 +523,601 @@
       "exports": [
         {
           "kind": "js",
-          "name": "FilteredList",
+          "name": "ControlBlockList",
           "declaration": {
-            "name": "FilteredList",
-            "module": "src/foundation/filtered-list.ts"
+            "name": "ControlBlockList",
+            "module": "src/components/control-block-list.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/ied-list.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "IedList",
+          "members": [
+            {
+              "kind": "field",
+              "name": "scopedElements",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ 'oscd-icon': OscdIcon, 'oscd-list-item': OscdListItem, 'virtualized-filtered-list': VirtualizedFilteredList, }"
+            },
+            {
+              "kind": "field",
+              "name": "doc",
+              "type": {
+                "text": "XMLDocument"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "docVersion",
+              "type": {
+                "text": "unknown | undefined"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "serviceType",
+              "type": {
+                "text": "'goose' | 'smv' | undefined"
+              },
+              "attribute": "serviceType"
+            },
+            {
+              "kind": "field",
+              "name": "onOpenDocReset",
+              "privacy": "private"
+            },
+            {
+              "kind": "method",
+              "name": "onIedSelect",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "element",
+                  "type": {
+                    "text": "Element"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "renderIedItem",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "matchIedItem",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "iedKey",
+              "privacy": "private"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "serviceType",
+              "type": {
+                "text": "'goose' | 'smv' | undefined"
+              },
+              "fieldName": "serviceType"
+            }
+          ],
+          "mixins": [
+            {
+              "name": "ScopedElementsMixin",
+              "package": "@open-wc/scoped-elements/lit-element.js"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "IedList",
+          "declaration": {
+            "name": "IedList",
+            "module": "src/components/ied-list.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/subscriber-list.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "An element for subscribing and unsubscribing IEDs to GOOSE/SMV messages.",
+          "name": "SubscriberList",
+          "members": [
+            {
+              "kind": "field",
+              "name": "scopedElements",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ 'oscd-icon': OscdIcon, 'oscd-list': OscdList, 'oscd-list-item': OscdListItem, 'oscd-divider': OscdDivider, 'virtualized-filtered-list': VirtualizedFilteredList, }"
+            },
+            {
+              "kind": "field",
+              "name": "doc",
+              "type": {
+                "text": "XMLDocument"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "docVersion",
+              "type": {
+                "text": "unknown | undefined"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "serviceType",
+              "type": {
+                "text": "ServiceType"
+              },
+              "default": "'goose'",
+              "attribute": "serviceType"
+            },
+            {
+              "kind": "field",
+              "name": "currentSelectedControl",
+              "type": {
+                "text": "Element | undefined"
+              },
+              "privacy": "private",
+              "description": "Current selected control block (when in Publisher view)"
+            },
+            {
+              "kind": "field",
+              "name": "currentControlIedName",
+              "type": {
+                "text": "string | undefined | null"
+              },
+              "privacy": "private",
+              "description": "The name of the IED belonging to the current selected control"
+            },
+            {
+              "kind": "field",
+              "name": "controlSelector",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "private",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "onIEDSelectEvent",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "onControlSelectEvent",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "onControlSubscriptionEvent",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "onViewChange",
+              "privacy": "private"
+            },
+            {
+              "kind": "method",
+              "name": "subscribeIed",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "ied",
+                  "type": {
+                    "text": "Element"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "unsubscribeIed",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "ied",
+                  "type": {
+                    "text": "Element"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "renderSubscriber",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "status",
+                  "type": {
+                    "text": "SubscribeStatus"
+                  }
+                },
+                {
+                  "name": "element",
+                  "type": {
+                    "text": "Element"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "buildSubscriberGroup",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "SubscriberListRow[]"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "headline",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "keyPrefix",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "emptyHeadline",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "elements",
+                  "type": {
+                    "text": "ListElement[]"
+                  }
+                },
+                {
+                  "name": "status",
+                  "type": {
+                    "text": "SubscribeStatus"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "buildRows",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "SubscriberListRow[]"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "renderRow",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "matchRow",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "rowKey",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "serviceLabel",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "private",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "renderTitle",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "subscribedElements",
+              "type": {
+                "text": "ListElement[]"
+              },
+              "default": "[]",
+              "description": "List holding all current subscribed Elements.",
+              "inheritedFrom": {
+                "name": "SubscriberListContainer",
+                "module": "src/foundation/subscription.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "availableElements",
+              "type": {
+                "text": "ListElement[]"
+              },
+              "default": "[]",
+              "description": "List holding all current available Elements which are not subscribed.",
+              "inheritedFrom": {
+                "name": "SubscriberListContainer",
+                "module": "src/foundation/subscription.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "currentSelectedIed",
+              "type": {
+                "text": "Element | undefined"
+              },
+              "description": "Current selected IED (when in Subscriber view)",
+              "inheritedFrom": {
+                "name": "SubscriberListContainer",
+                "module": "src/foundation/subscription.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "currentUsedDataset",
+              "type": {
+                "text": "Element | undefined | null"
+              },
+              "description": "The current used dataset for subscribing / unsubscribing",
+              "inheritedFrom": {
+                "name": "SubscriberListContainer",
+                "module": "src/foundation/subscription.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "subscriberWrapper",
+              "type": {
+                "text": "Element"
+              },
+              "inheritedFrom": {
+                "name": "SubscriberListContainer",
+                "module": "src/foundation/subscription.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "resetElements",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "inheritedFrom": {
+                "name": "SubscriberListContainer",
+                "module": "src/foundation/subscription.ts"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "serviceType",
+              "type": {
+                "text": "ServiceType"
+              },
+              "default": "'goose'",
+              "fieldName": "serviceType"
+            }
+          ],
+          "mixins": [
+            {
+              "name": "ScopedElementsMixin",
+              "package": "@open-wc/scoped-elements/lit-element.js"
+            }
+          ],
+          "superclass": {
+            "name": "SubscriberListContainer",
+            "module": "/src/foundation/subscription.js"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "SubscriberList",
+          "declaration": {
+            "name": "SubscriberList",
+            "module": "src/components/subscriber-list.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/foundation/control-block-helpers.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "getAssociatedDataSet",
+          "return": {
+            "type": {
+              "text": "Element | null"
+            }
+          },
+          "parameters": [
+            {
+              "name": "control",
+              "type": {
+                "text": "Element"
+              }
+            }
+          ],
+          "description": "Returns the DataSet referenced by a control block's `datSet` attribute.\nThe DataSet must be a sibling under the same LN0."
+        },
+        {
+          "kind": "function",
+          "name": "getAssociatedCommunication",
+          "return": {
+            "type": {
+              "text": "Element | null"
+            }
+          },
+          "parameters": [
+            {
+              "name": "control",
+              "type": {
+                "text": "Element"
+              }
+            }
+          ],
+          "description": "Returns the communication element associated with a control block.\nThe element is located in Communication > SubNetwork > ConnectedAP and matched\nby iedName, apName, ldInst, and cbName."
+        },
+        {
+          "kind": "function",
+          "name": "getAssociatedSmvOpts",
+          "return": {
+            "type": {
+              "text": "Element | null"
+            }
+          },
+          "parameters": [
+            {
+              "name": "control",
+              "type": {
+                "text": "Element"
+              }
+            }
+          ],
+          "description": "Returns the SmvOpts child element when editing a SampledValueControl."
+        },
+        {
+          "kind": "function",
+          "name": "isDataSetSingleUse",
+          "return": {
+            "type": {
+              "text": "boolean"
+            }
+          },
+          "parameters": [
+            {
+              "name": "dataSet",
+              "type": {
+                "text": "Element"
+              }
+            }
+          ],
+          "description": "Returns true if no other control block under the same LN0 references\nthe given DataSet. A single-use DataSet can be safely removed together\nwith its control block."
+        },
+        {
+          "kind": "function",
+          "name": "buildRemoveEdits",
+          "return": {
+            "type": {
+              "text": "EditV2[]"
+            }
+          },
+          "parameters": [
+            {
+              "name": "control",
+              "type": {
+                "text": "Element"
+              }
+            }
+          ],
+          "description": "Builds an EditV2 array that removes a control block and its associated\nelements: the DataSet (if single-use) and its communication element."
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "getAssociatedDataSet",
+          "declaration": {
+            "name": "getAssociatedDataSet",
+            "module": "src/foundation/control-block-helpers.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "getAssociatedCommunication",
+          "declaration": {
+            "name": "getAssociatedCommunication",
+            "module": "src/foundation/control-block-helpers.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "getAssociatedSmvOpts",
+          "declaration": {
+            "name": "getAssociatedSmvOpts",
+            "module": "src/foundation/control-block-helpers.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "isDataSetSingleUse",
+          "declaration": {
+            "name": "isDataSetSingleUse",
+            "module": "src/foundation/control-block-helpers.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "buildRemoveEdits",
+          "declaration": {
+            "name": "buildRemoveEdits",
+            "module": "src/foundation/control-block-helpers.ts"
           }
         }
       ]
@@ -942,12 +1854,12 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/subscription/ied-list.ts",
+      "path": "src/foundation/virtualized-filtered-list.ts",
       "declarations": [
         {
           "kind": "class",
           "description": "",
-          "name": "IedList",
+          "name": "VirtualizedFilteredList",
           "members": [
             {
               "kind": "field",
@@ -956,61 +1868,101 @@
                 "text": "object"
               },
               "static": true,
-              "default": "{ 'oscd-icon': OscdIcon, 'oscd-list-item': OscdListItem, 'filtered-list': FilteredList, }"
+              "default": "{ 'oscd-icon': OscdIcon, 'oscd-icon-button': OscdIconButton, 'oscd-list': OscdList, 'oscd-list-item': OscdListItem, 'oscd-divider': OscdDivider, 'oscd-outlined-text-field': OscdOutlinedTextField, }"
             },
             {
               "kind": "field",
-              "name": "doc",
+              "name": "items",
               "type": {
-                "text": "XMLDocument"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "docVersion",
-              "type": {
-                "text": "unknown | undefined"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "serviceType",
-              "type": {
-                "text": "'goose' | 'smv' | undefined"
+                "text": "unknown[]"
               },
-              "attribute": "serviceType"
+              "default": "[]"
             },
             {
               "kind": "field",
-              "name": "onOpenDocReset",
+              "name": "renderItem",
+              "type": {
+                "text": "(item: unknown) => TemplateResult"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "keyFunction",
+              "type": {
+                "text": "(item: unknown) => string"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "matchItem",
+              "type": {
+                "text": "(item: unknown, regex: RegExp) => boolean"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "'search'",
+              "attribute": "placeholder"
+            },
+            {
+              "kind": "field",
+              "name": "searchValue",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "private",
+              "default": "''"
+            },
+            {
+              "kind": "field",
+              "name": "searchField",
+              "type": {
+                "text": "HTMLElement & { value: string } | undefined"
+              },
               "privacy": "private"
             },
             {
               "kind": "method",
-              "name": "onIedSelect",
+              "name": "onInput",
               "privacy": "private",
               "return": {
                 "type": {
                   "text": "void"
                 }
-              },
-              "parameters": [
-                {
-                  "name": "element",
-                  "type": {
-                    "text": "Element"
-                  }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "clearSearch",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
                 }
-              ]
+              }
+            },
+            {
+              "kind": "field",
+              "name": "filteredItems",
+              "type": {
+                "text": "unknown[]"
+              },
+              "privacy": "private",
+              "readonly": true
             }
           ],
           "attributes": [
             {
-              "name": "serviceType",
+              "name": "placeholder",
               "type": {
-                "text": "'goose' | 'smv' | undefined"
+                "text": "string"
               },
-              "fieldName": "serviceType"
+              "default": "'search'",
+              "fieldName": "placeholder"
             }
           ],
           "mixins": [
@@ -1029,665 +1981,10 @@
       "exports": [
         {
           "kind": "js",
-          "name": "IedList",
+          "name": "VirtualizedFilteredList",
           "declaration": {
-            "name": "IedList",
-            "module": "src/subscription/ied-list.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/foundation/shared/control-block-helpers.ts",
-      "declarations": [
-        {
-          "kind": "function",
-          "name": "getAssociatedDataSet",
-          "return": {
-            "type": {
-              "text": "Element | null"
-            }
-          },
-          "parameters": [
-            {
-              "name": "control",
-              "type": {
-                "text": "Element"
-              }
-            }
-          ],
-          "description": "Returns the DataSet referenced by a control block's `datSet` attribute.\nThe DataSet must be a sibling under the same LN0."
-        },
-        {
-          "kind": "function",
-          "name": "getAssociatedGSE",
-          "return": {
-            "type": {
-              "text": "Element | null"
-            }
-          },
-          "parameters": [
-            {
-              "name": "control",
-              "type": {
-                "text": "Element"
-              }
-            }
-          ],
-          "description": "Returns the GSE communication element associated with a GSEControl.\nThe GSE is located in Communication > SubNetwork > ConnectedAP and matched\nby iedName, apName, ldInst, and cbName."
-        },
-        {
-          "kind": "function",
-          "name": "isDataSetSingleUse",
-          "return": {
-            "type": {
-              "text": "boolean"
-            }
-          },
-          "parameters": [
-            {
-              "name": "dataSet",
-              "type": {
-                "text": "Element"
-              }
-            }
-          ],
-          "description": "Returns true if no other control block under the same LN0 references\nthe given DataSet. A single-use DataSet can be safely removed together\nwith its control block."
-        },
-        {
-          "kind": "function",
-          "name": "buildRemoveEdits",
-          "return": {
-            "type": {
-              "text": "EditV2[]"
-            }
-          },
-          "parameters": [
-            {
-              "name": "control",
-              "type": {
-                "text": "Element"
-              }
-            }
-          ],
-          "description": "Builds an EditV2 array that removes a GSEControl and its associated\nelements: the DataSet (if single-use) and the GSE communication element."
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "getAssociatedDataSet",
-          "declaration": {
-            "name": "getAssociatedDataSet",
-            "module": "src/foundation/shared/control-block-helpers.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "getAssociatedGSE",
-          "declaration": {
-            "name": "getAssociatedGSE",
-            "module": "src/foundation/shared/control-block-helpers.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "isDataSetSingleUse",
-          "declaration": {
-            "name": "isDataSetSingleUse",
-            "module": "src/foundation/shared/control-block-helpers.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "buildRemoveEdits",
-          "declaration": {
-            "name": "buildRemoveEdits",
-            "module": "src/foundation/shared/control-block-helpers.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/subscription/goose/foundation.ts",
-      "declarations": [
-        {
-          "kind": "function",
-          "name": "newGOOSESelectEvent",
-          "return": {
-            "type": {
-              "text": "GOOSESelectEvent"
-            }
-          },
-          "parameters": [
-            {
-              "name": "gseControl",
-              "type": {
-                "text": "Element | undefined"
-              }
-            },
-            {
-              "name": "dataset",
-              "type": {
-                "text": "Element | undefined"
-              }
-            },
-            {
-              "name": "eventInitDict",
-              "optional": true,
-              "type": {
-                "text": "CustomEventInit<GOOSESelectDetail>"
-              }
-            }
-          ]
-        },
-        {
-          "kind": "function",
-          "name": "newGooseSubscriptionEvent",
-          "return": {
-            "type": {
-              "text": "GooseSubscriptionEvent"
-            }
-          },
-          "parameters": [
-            {
-              "name": "element",
-              "type": {
-                "text": "Element"
-              }
-            },
-            {
-              "name": "subscribeStatus",
-              "type": {
-                "text": "SubscribeStatus"
-              }
-            }
-          ]
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "newGOOSESelectEvent",
-          "declaration": {
-            "name": "newGOOSESelectEvent",
-            "module": "src/subscription/goose/foundation.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "newGooseSubscriptionEvent",
-          "declaration": {
-            "name": "newGooseSubscriptionEvent",
-            "module": "src/subscription/goose/foundation.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/subscription/goose/goose-list.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "",
-          "name": "GooseList",
-          "members": [
-            {
-              "kind": "field",
-              "name": "scopedElements",
-              "type": {
-                "text": "object"
-              },
-              "static": true,
-              "default": "{ 'oscd-icon': OscdIcon, 'oscd-list-item': OscdListItem, 'oscd-icon-button': OscdIconButton, 'oscd-divider': OscdDivider, 'oscd-menu': OscdMenu, 'oscd-menu-item': OscdMenuItem, 'filtered-list': FilteredList, }"
-            },
-            {
-              "kind": "field",
-              "name": "onOpenDocReset",
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "doc",
-              "type": {
-                "text": "XMLDocument"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "docVersion",
-              "type": {
-                "text": "unknown | undefined"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "menuControlElement",
-              "type": {
-                "text": "Element | undefined"
-              },
-              "privacy": "private",
-              "description": "The control element that the context menu currently targets."
-            },
-            {
-              "kind": "field",
-              "name": "controlBlockMenu",
-              "type": {
-                "text": "OscdMenu"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "method",
-              "name": "onSelect",
-              "privacy": "private",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "gseControl",
-                  "type": {
-                    "text": "Element"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "openControlMenu",
-              "privacy": "private",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "event",
-                  "type": {
-                    "text": "Event"
-                  }
-                },
-                {
-                  "name": "control",
-                  "type": {
-                    "text": "Element"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "onMenuEdit",
-              "privacy": "private",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              }
-            },
-            {
-              "kind": "method",
-              "name": "onMenuEditDataSet",
-              "privacy": "private",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              }
-            },
-            {
-              "kind": "method",
-              "name": "onMenuEditCommunication",
-              "privacy": "private",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              }
-            },
-            {
-              "kind": "method",
-              "name": "onMenuRemove",
-              "privacy": "private",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              }
-            },
-            {
-              "kind": "method",
-              "name": "renderGoose",
-              "return": {
-                "type": {
-                  "text": "TemplateResult"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "gseControl",
-                  "type": {
-                    "text": "Element"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "renderControlBlockMenu",
-              "privacy": "private",
-              "return": {
-                "type": {
-                  "text": "TemplateResult"
-                }
-              }
-            }
-          ],
-          "mixins": [
-            {
-              "name": "ScopedElementsMixin",
-              "package": "@open-wc/scoped-elements/lit-element.js"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "GooseList",
-          "declaration": {
-            "name": "GooseList",
-            "module": "src/subscription/goose/goose-list.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/subscription/goose/subscriber-list.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "An sub element for subscribing and unsubscribing IEDs to GOOSE messages.",
-          "name": "SubscriberListGoose",
-          "members": [
-            {
-              "kind": "field",
-              "name": "scopedElements",
-              "type": {
-                "text": "object"
-              },
-              "static": true,
-              "default": "{ 'oscd-icon': OscdIcon, 'oscd-list': OscdList, 'oscd-list-item': OscdListItem, 'oscd-divider': OscdDivider, 'filtered-list': FilteredList, }"
-            },
-            {
-              "kind": "field",
-              "name": "doc",
-              "type": {
-                "text": "XMLDocument"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "docVersion",
-              "type": {
-                "text": "unknown | undefined"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "currentSelectedGseControl",
-              "type": {
-                "text": "Element | undefined"
-              },
-              "description": "Current selected GOOSE message (when in GOOSE Publisher view)"
-            },
-            {
-              "kind": "field",
-              "name": "currentGooseIedName",
-              "type": {
-                "text": "string | undefined | null"
-              },
-              "description": "The name of the IED belonging to the current selected GOOSE"
-            },
-            {
-              "kind": "field",
-              "name": "onIEDSelectEvent",
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "onGOOSESelectEvent",
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "onGooseSubscriptionEvent",
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
-              "name": "onViewChange",
-              "privacy": "private"
-            },
-            {
-              "kind": "method",
-              "name": "subscribeIed",
-              "privacy": "private",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "ied",
-                  "type": {
-                    "text": "Element"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "unsubscribeIed",
-              "privacy": "private",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "ied",
-                  "type": {
-                    "text": "Element"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "renderSubscriber",
-              "return": {
-                "type": {
-                  "text": "TemplateResult"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "status",
-                  "type": {
-                    "text": "SubscribeStatus"
-                  }
-                },
-                {
-                  "name": "element",
-                  "type": {
-                    "text": "Element"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "renderUnSubscribers",
-              "return": {
-                "type": {
-                  "text": "TemplateResult"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "elements",
-                  "type": {
-                    "text": "ListElement[]"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "renderPartiallySubscribers",
-              "return": {
-                "type": {
-                  "text": "TemplateResult"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "elements",
-                  "type": {
-                    "text": "ListElement[]"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "renderFullSubscribers",
-              "return": {
-                "type": {
-                  "text": "TemplateResult"
-                }
-              }
-            },
-            {
-              "kind": "method",
-              "name": "renderTitle",
-              "return": {
-                "type": {
-                  "text": "TemplateResult"
-                }
-              }
-            },
-            {
-              "kind": "field",
-              "name": "subscribedElements",
-              "type": {
-                "text": "ListElement[]"
-              },
-              "default": "[]",
-              "description": "List holding all current subscribed Elements.",
-              "inheritedFrom": {
-                "name": "SubscriberListContainer",
-                "module": "src/foundation/subscription.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "availableElements",
-              "type": {
-                "text": "ListElement[]"
-              },
-              "default": "[]",
-              "description": "List holding all current available Elements which are not subscribed.",
-              "inheritedFrom": {
-                "name": "SubscriberListContainer",
-                "module": "src/foundation/subscription.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "currentSelectedIed",
-              "type": {
-                "text": "Element | undefined"
-              },
-              "description": "Current selected IED (when in Subscriber view)",
-              "inheritedFrom": {
-                "name": "SubscriberListContainer",
-                "module": "src/foundation/subscription.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "currentUsedDataset",
-              "type": {
-                "text": "Element | undefined | null"
-              },
-              "description": "The current used dataset for subscribing / unsubscribing",
-              "inheritedFrom": {
-                "name": "SubscriberListContainer",
-                "module": "src/foundation/subscription.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "subscriberWrapper",
-              "type": {
-                "text": "Element"
-              },
-              "inheritedFrom": {
-                "name": "SubscriberListContainer",
-                "module": "src/foundation/subscription.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "resetElements",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "inheritedFrom": {
-                "name": "SubscriberListContainer",
-                "module": "src/foundation/subscription.ts"
-              }
-            }
-          ],
-          "mixins": [
-            {
-              "name": "ScopedElementsMixin",
-              "package": "@open-wc/scoped-elements/lit-element.js"
-            }
-          ],
-          "superclass": {
-            "name": "SubscriberListContainer",
-            "module": "/src/foundation/subscription.js"
-          }
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "SubscriberListGoose",
-          "declaration": {
-            "name": "SubscriberListGoose",
-            "module": "src/subscription/goose/subscriber-list.ts"
+            "name": "VirtualizedFilteredList",
+            "module": "src/foundation/virtualized-filtered-list.ts"
           }
         }
       ]

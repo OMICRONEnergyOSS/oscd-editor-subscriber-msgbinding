@@ -1,23 +1,3 @@
-// src/foundation/subscription.ts
-//
-// Copied from legacy monorepo and transformed for standalone use.
-// Original: legacy/compas-open-scd/packages/plugins/src/editors/subscription/foundation.ts
-// Changes:
-//   - lit-element → lit + lit/decorators.js
-//   - @openscd/open-scd/src/foundation.js → local foundation + @openscd/scl-lib
-//   - @openscd/open-scd/src/foundation/ied.js → local foundation/ied.ts
-//   - @openscd/open-scd/src/schemas.js → local foundation/scl.ts
-//   - editCount → docVersion (in SubscriberListContainer)
-//   - Removed @customElement (none present in original, but SubscriberListContainer is a base class)
-//   - Step 3: Removed deprecated action-building functions (instantiateSubscriptionSupervision,
-//     removeSubscriptionSupervision, canRemoveSubscriptionSupervision, createExtRefElement,
-//     updateExtRefElement, canCreateValidExtRef, existExtRef, findOrCreateAvailableLNInst,
-//     isSupervisionAllowed, isSupervisionModificationAllowed, instantiatedSupervisionsCount,
-//     maxSupervisions) and related imports (Create, Delete, createElement, cloneElement,
-//     controlBlockObjRef, isPublic, lnInstGenerator, SCL_NAMESPACE).
-//     These are now replaced by scl-lib subscribe()/unsubscribe() at the call sites.
-//     Kept: getFirstSubscribedExtRef (query-only, used by renderSubscriber in MSG plugins).
-
 import { css, LitElement } from 'lit';
 import { query } from 'lit/decorators.js';
 
@@ -248,7 +228,9 @@ export function getSupervisionCbRefs(
  * @returns The supervision LN instance or null if not found
  */
 export function getExistingSupervision(extRef: Element | null): Element | null {
-  if (extRef === null) return null;
+  if (extRef === null) {
+    return null;
+  }
 
   const extRefValues = ['iedName', 'serviceType', 'srcPrefix', 'srcCBName'];
   const [srcIedName, serviceType, srcPrefix, srcCBName] = extRefValues.map(
@@ -343,21 +325,7 @@ export const styles = css`
     opacity: 1;
   }
 
-  section:focus {
-    box-shadow:
-      0 8px 10px 1px rgba(0, 0, 0, 0.14),
-      0 3px 14px 2px rgba(0, 0, 0, 0.12),
-      0 5px 5px -3px rgba(0, 0, 0, 0.2);
-  }
-
-  section:focus-within {
-    outline-width: 2px;
-    transition: all 250ms linear;
-  }
-
-  h1,
-  h2,
-  h3 {
+  h2 {
     color: var(--mdc-theme-on-surface);
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
@@ -368,23 +336,6 @@ export const styles = css`
     line-height: 48px;
     padding-left: 0.3em;
     transition: background-color 150ms linear;
-  }
-
-  section:focus-within > h1,
-  section:focus-within > h2,
-  section:focus-within > h3 {
-    color: var(--mdc-theme-surface);
-    background-color: var(--mdc-theme-primary);
-    transition: background-color 200ms linear;
-  }
-
-  h1 > nav,
-  h2 > nav,
-  h3 > nav,
-  h1 > abbr > oscd-icon-button,
-  h2 > abbr > oscd-icon-button,
-  h3 > abbr > oscd-icon-button {
-    float: right;
   }
 
   abbr[title] {

@@ -1,26 +1,4 @@
-// src/subscription/goose/subscriber-list.ts
-//
-// Copied from legacy monorepo and transformed for standalone use.
-// Original: legacy/compas-open-scd/packages/plugins/src/editors/subscription/goose/subscriber-list.ts
-// Changes:
-//   - lit-element → lit + lit/decorators.js
-//   - lit-html → lit (nothing)
-//   - @openscd/open-scd/src/foundation.js → @openscd/scl-lib (identity)
-//   - @openscd/open-scd/src/filtered-list.js → local foundation/filtered-list.ts (ScopedElements)
-//   - lit-translate → @lit/localize msg()
-//   - Removed @customElement decorator (ScopedElements pattern)
-//   - editCount → docVersion
-//   - mwc-* registered in scopedElements
-//   - Step 5: Replaced mwc-icon → OscdIcon, mwc-list → OscdList, mwc-list-item → OscdListItem,
-//     li[divider] → OscdDivider. Slot renames: graphic→start, meta→end.
-//     Removed: graphic/hasMeta/noninteractive/value attrs.
-//     Added: type="button"|"text", data-value.
-//   - Constructor .closest('.container') → connectedCallback/disconnectedCallback
-//   - Module-level view state preserved (intentional legacy behavior)
-//   - Step 3: Replaced deprecated editor actions with EditV2 via scl-lib subscribe/unsubscribe.
-//     Legacy bug (supervision actions dropped via .concat()) is naturally fixed.
-
-import { css, html, nothing, TemplateResult } from 'lit';
+import { css, html, nothing, PropertyValues, TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { msg } from '@lit/localize';
 import { ScopedElementsMixin } from '@open-wc/scoped-elements/lit-element.js';
@@ -34,13 +12,14 @@ import { OscdList } from '@omicronenergy/oscd-ui/list/OscdList.js';
 import { OscdListItem } from '@omicronenergy/oscd-ui/list/OscdListItem.js';
 import { OscdDivider } from '@omicronenergy/oscd-ui/divider/OscdDivider.js';
 
-import { FilteredList } from '../../foundation/filtered-list.js';
+import { VirtualizedFilteredList } from '../foundation/virtualized-filtered-list.js';
 
 import {
-  GOOSESelectEvent,
-  GooseSubscriptionEvent,
-  newGooseSubscriptionEvent,
-} from './foundation.js';
+  ServiceType,
+  ControlSelectEvent,
+  ControlSubscriptionEvent,
+  newControlSubscriptionEvent,
+} from '../foundation.js';
 
 import {
   getExistingSupervision,
@@ -53,13 +32,40 @@ import {
   SubscribeStatus,
   View,
   ViewEvent,
-} from '../../foundation/subscription.js';
+} from '../foundation/subscription.js';
+
+interface SectionRow {
+  type: 'section';
+  key: string;
+  headline: string;
+}
+
+interface DividerRow {
+  type: 'divider';
+  key: string;
+}
+
+interface EmptyRow {
+  type: 'empty';
+  key: string;
+  headline: string;
+}
+
+interface SubscriberRow {
+  type: 'subscriber';
+  key: string;
+  element: Element;
+  status: SubscribeStatus;
+  searchText: string;
+}
+
+type SubscriberListRow = SectionRow | DividerRow | EmptyRow | SubscriberRow;
 
 /** Defining view outside the class, which makes it persistent. */
 let view: View = View.PUBLISHER;
 
-/** An sub element for subscribing and unsubscribing IEDs to GOOSE messages. */
-export class SubscriberListGoose extends ScopedElementsMixin(
+/** An element for subscribing and unsubscribing IEDs to GOOSE/SMV messages. */
+export class SubscriberList extends ScopedElementsMixin(
   SubscriberListContainer,
 ) {
   static scopedElements = {
@@ -67,7 +73,7 @@ export class SubscriberListGoose extends ScopedElementsMixin(
     'oscd-list': OscdList,
     'oscd-list-item': OscdListItem,
     'oscd-divider': OscdDivider,
-    'filtered-list': FilteredList,
+    'virtualized-filtered-list': VirtualizedFilteredList,
   };
 
   @property({ attribute: false })
@@ -76,11 +82,27 @@ export class SubscriberListGoose extends ScopedElementsMixin(
   @property({ attribute: false })
   docVersion?: unknown;
 
-  /** Current selected GOOSE message (when in GOOSE Publisher view) */
-  currentSelectedGseControl: Element | undefined;
+  @property({ type: String })
+  serviceType: ServiceType = 'goose';
 
-  /** The name of the IED belonging to the current selected GOOSE */
-  currentGooseIedName: string | undefined | null;
+  /** Current selected control block (when in Publisher view) */
+  private currentSelectedControl: Element | undefined;
+
+  /** The name of the IED belonging to the current selected control */
+  private currentControlIedName: string | undefined | null;
+
+  private get controlSelector(): string {
+    return this.serviceType === 'goose' ? 'GSEControl' : 'SampledValueControl';
+  }
+
+  protected willUpdate(changedProperties: PropertyValues): void {
+    if (changedProperties.has('serviceType')) {
+      this.currentSelectedControl = undefined;
+      this.currentControlIedName = undefined;
+      this.currentSelectedIed = undefined;
+      this.resetElements();
+    }
+  }
 
   private onIEDSelectEvent = (event: IEDSelectEvent): void => {
     if (!event.detail.ied) return;
@@ -92,7 +114,7 @@ export class SubscriberListGoose extends ScopedElementsMixin(
       `LN0 > Inputs, LN > Inputs`,
     );
 
-    Array.from(this.doc.querySelectorAll('GSEControl'))
+    Array.from(this.doc.querySelectorAll(this.controlSelector))
       .filter(cb => cb.hasAttribute('datSet'))
       .forEach(control => {
         const ied = control.closest('IED')!;
@@ -103,7 +125,6 @@ export class SubscriberListGoose extends ScopedElementsMixin(
         )
           return;
 
-        /** If no Inputs is available, it's automatically available. */
         if (subscribedInputs.length == 0) {
           this.availableElements.push({ element: control });
           return;
@@ -139,47 +160,37 @@ export class SubscriberListGoose extends ScopedElementsMixin(
     this.requestUpdate();
   };
 
-  private onGOOSESelectEvent = (event: GOOSESelectEvent): void => {
-    if (!event.detail.dataset || !event.detail.gseControl) return;
+  private onControlSelectEvent = (event: ControlSelectEvent): void => {
+    if (!event.detail.dataset || !event.detail.controlBlock) return;
 
-    this.currentSelectedGseControl = event.detail.gseControl;
+    this.currentSelectedControl = event.detail.controlBlock;
     this.currentUsedDataset = event.detail.dataset;
-    this.currentGooseIedName = this.currentSelectedGseControl
+    this.currentControlIedName = this.currentSelectedControl
       ?.closest('IED')
       ?.getAttribute('name');
 
     this.resetElements();
 
     Array.from(this.doc.querySelectorAll(':root > IED'))
-      .filter(ied => ied.getAttribute('name') != this.currentGooseIedName)
+      .filter(ied => ied.getAttribute('name') != this.currentControlIedName)
       .forEach(ied => {
         const inputElements = ied.querySelectorAll(`LN0 > Inputs, LN > Inputs`);
 
         let numberOfLinkedExtRefs = 0;
 
-        /**
-         * If no Inputs element is found, we can safely say it's not subscribed.
-         */
         if (!inputElements) {
           this.availableElements.push({ element: ied });
           return;
         }
 
-        /**
-         * Count all the linked ExtRefs.
-         */
         this.currentUsedDataset!.querySelectorAll('FCDA').forEach(fcda => {
           inputElements.forEach(inputs => {
-            if (getExtRef(inputs, fcda, this.currentSelectedGseControl)) {
+            if (getExtRef(inputs, fcda, this.currentSelectedControl)) {
               numberOfLinkedExtRefs++;
             }
           });
         });
 
-        /**
-         * Make a distinction between not subscribed at all,
-         * partially subscribed and fully subscribed.
-         */
         if (numberOfLinkedExtRefs == 0) {
           this.availableElements.push({ element: ied });
           return;
@@ -198,7 +209,9 @@ export class SubscriberListGoose extends ScopedElementsMixin(
     this.requestUpdate();
   };
 
-  private onGooseSubscriptionEvent = (event: GooseSubscriptionEvent): void => {
+  private onControlSubscriptionEvent = (
+    event: ControlSubscriptionEvent,
+  ): void => {
     let iedToSubscribe = event.detail.element;
 
     if (view == View.SUBSCRIBER) {
@@ -207,8 +220,8 @@ export class SubscriberListGoose extends ScopedElementsMixin(
         event.detail.element.parentElement?.querySelector(
           `DataSet[name="${dataSetName}"]`,
         );
-      this.currentSelectedGseControl = event.detail.element;
-      this.currentGooseIedName = event.detail.element
+      this.currentSelectedControl = event.detail.element;
+      this.currentControlIedName = event.detail.element
         .closest('IED')
         ?.getAttribute('name');
       iedToSubscribe = this.currentSelectedIed!;
@@ -234,7 +247,7 @@ export class SubscriberListGoose extends ScopedElementsMixin(
     view = event.detail.view;
 
     this.currentSelectedIed = undefined;
-    this.currentSelectedGseControl = undefined;
+    this.currentSelectedControl = undefined;
 
     this.resetElements();
     this.requestUpdate();
@@ -249,12 +262,12 @@ export class SubscriberListGoose extends ScopedElementsMixin(
         this.onIEDSelectEvent as EventListener,
       );
       parentDiv.addEventListener(
-        'goose-select',
-        this.onGOOSESelectEvent as EventListener,
+        'control-select',
+        this.onControlSelectEvent as EventListener,
       );
       parentDiv.addEventListener(
-        'goose-subscription',
-        this.onGooseSubscriptionEvent as EventListener,
+        'control-subscription',
+        this.onControlSubscriptionEvent as EventListener,
       );
       parentDiv.addEventListener('view', this.onViewChange as EventListener);
     }
@@ -268,12 +281,12 @@ export class SubscriberListGoose extends ScopedElementsMixin(
         this.onIEDSelectEvent as EventListener,
       );
       parentDiv.removeEventListener(
-        'goose-select',
-        this.onGOOSESelectEvent as EventListener,
+        'control-select',
+        this.onControlSelectEvent as EventListener,
       );
       parentDiv.removeEventListener(
-        'goose-subscription',
-        this.onGooseSubscriptionEvent as EventListener,
+        'control-subscription',
+        this.onControlSubscriptionEvent as EventListener,
       );
       parentDiv.removeEventListener('view', this.onViewChange as EventListener);
     }
@@ -290,7 +303,7 @@ export class SubscriberListGoose extends ScopedElementsMixin(
         sink: ied.querySelector('LN0')!,
         source: {
           fcda,
-          controlBlock: this.currentSelectedGseControl,
+          controlBlock: this.currentSelectedControl,
         },
       });
       allEdits.push(...edits);
@@ -307,7 +320,7 @@ export class SubscriberListGoose extends ScopedElementsMixin(
     const extRefs: Element[] = [];
     ied.querySelectorAll('LN0 > Inputs, LN > Inputs').forEach(inputs => {
       this.currentUsedDataset!.querySelectorAll('FCDA').forEach(fcda => {
-        const extRef = getExtRef(inputs, fcda, this.currentSelectedGseControl);
+        const extRef = getExtRef(inputs, fcda, this.currentSelectedControl);
         if (extRef) extRefs.push(extRef);
       });
     });
@@ -328,7 +341,7 @@ export class SubscriberListGoose extends ScopedElementsMixin(
     if (status !== SubscribeStatus.None) {
       if (view === View.PUBLISHER) {
         firstSubscribedExtRef = getFirstSubscribedExtRef(
-          this.currentSelectedGseControl!,
+          this.currentSelectedControl!,
           element,
         );
         supervisionNode = getExistingSupervision(firstSubscribedExtRef!);
@@ -343,7 +356,7 @@ export class SubscriberListGoose extends ScopedElementsMixin(
     return html` <oscd-list-item
       @click=${() => {
         this.dispatchEvent(
-          newGooseSubscriptionEvent(element, status ?? SubscribeStatus.None),
+          newControlSubscriptionEvent(element, status ?? SubscribeStatus.None),
         );
       }}
       type="button"
@@ -365,91 +378,121 @@ export class SubscriberListGoose extends ScopedElementsMixin(
     </oscd-list-item>`;
   }
 
-  renderUnSubscribers(elements: ListElement[]): TemplateResult {
-    return html`<oscd-list-item
-        type="text"
-        data-value="${elements
-          .map(element => {
-            const id = identity(element.element) as string;
-            return typeof id === 'string' ? id : '';
-          })
-          .join(' ')}"
-      >
-        <span>${msg('Available to subscribe')}</span>
-      </oscd-list-item>
-      <oscd-divider></oscd-divider>
-      ${elements.length > 0
-        ? elements.map(element =>
-            this.renderSubscriber(SubscribeStatus.None, element.element),
-          )
-        : html`<oscd-list-item type="text">
-            <span>${msg('None')}</span>
-          </oscd-list-item>`}`;
+  private buildSubscriberGroup(
+    headline: string,
+    keyPrefix: string,
+    emptyHeadline: string,
+    elements: ListElement[],
+    status: SubscribeStatus,
+  ): SubscriberListRow[] {
+    const result: SubscriberListRow[] = [
+      { type: 'section', key: `${keyPrefix}-header`, headline },
+      { type: 'divider', key: `${keyPrefix}-divider` },
+    ];
+
+    if (elements.length > 0) {
+      result.push(
+        ...elements.map(el => {
+          const id = identity(el.element) as string;
+          return {
+            type: 'subscriber' as const,
+            key: `${keyPrefix}-${typeof id === 'string' ? id : ''}`,
+            element: el.element,
+            status,
+            searchText: `${el.element.getAttribute('name') ?? ''} ${typeof id === 'string' ? id : ''}`,
+          };
+        }),
+      );
+    } else {
+      result.push({
+        type: 'empty',
+        key: `${keyPrefix}-empty`,
+        headline: emptyHeadline,
+      });
+    }
+
+    return result;
   }
 
-  renderPartiallySubscribers(elements: ListElement[]): TemplateResult {
-    return html`<oscd-list-item
-        type="text"
-        data-value="${elements
-          .map(element => {
-            const id = identity(element.element) as string;
-            return typeof id === 'string' ? id : '';
-          })
-          .join(' ')}"
-      >
-        <span>${msg('Partially subscribed')}</span>
-      </oscd-list-item>
-      <oscd-divider></oscd-divider>
-      ${elements.length > 0
-        ? elements.map(element =>
-            this.renderSubscriber(SubscribeStatus.Partial, element.element),
-          )
-        : html`<oscd-list-item type="text">
-            <span>${msg('None')}</span>
-          </oscd-list-item>`}`;
+  private buildRows(): SubscriberListRow[] {
+    return [
+      ...this.buildSubscriberGroup(
+        msg('Subscribed'),
+        'subscribed',
+        msg('None'),
+        this.subscribedElements,
+        SubscribeStatus.Full,
+      ),
+      ...this.buildSubscriberGroup(
+        msg('Partially subscribed'),
+        'partial',
+        msg('None'),
+        this.availableElements.filter(el => el.partial),
+        SubscribeStatus.Partial,
+      ),
+      ...this.buildSubscriberGroup(
+        msg('Available to subscribe'),
+        'available',
+        msg('None'),
+        this.availableElements.filter(el => !el.partial),
+        SubscribeStatus.None,
+      ),
+    ];
   }
 
-  renderFullSubscribers(): TemplateResult {
-    return html`<oscd-list-item
-        type="text"
-        data-value="${this.subscribedElements
-          .map(element => {
-            const id = identity(element.element) as string;
-            return typeof id === 'string' ? id : '';
-          })
-          .join(' ')}"
-      >
-        <span>${msg('Subscribed')}</span>
-      </oscd-list-item>
-      <oscd-divider></oscd-divider>
-      ${this.subscribedElements.length > 0
-        ? this.subscribedElements.map(element =>
-            this.renderSubscriber(SubscribeStatus.Full, element.element),
-          )
-        : html`<oscd-list-item type="text">
-            <span>${msg('None')}</span>
-          </oscd-list-item>`}`;
+  private renderRow = (item: unknown): TemplateResult => {
+    const row = item as SubscriberListRow;
+    if (row.type === 'section') {
+      return html`<oscd-list-item type="text">
+        <span>${row.headline}</span>
+      </oscd-list-item>`;
+    }
+    if (row.type === 'divider') {
+      return html`<oscd-divider></oscd-divider>`;
+    }
+    if (row.type === 'empty') {
+      return html`<oscd-list-item type="text">
+        <span>${row.headline}</span>
+      </oscd-list-item>`;
+    }
+    return this.renderSubscriber(row.status, row.element);
+  };
+
+  private matchRow = (item: unknown, regex: RegExp): boolean => {
+    const row = item as SubscriberListRow;
+    if (row.type === 'subscriber') {
+      return regex.test(row.searchText);
+    }
+    return true;
+  };
+
+  private rowKey = (item: unknown): string => {
+    return (item as SubscriberListRow).key;
+  };
+
+  private get serviceLabel(): string {
+    return this.serviceType === 'goose' ? 'GOOSE' : 'SMV';
   }
 
   renderTitle(): TemplateResult {
-    const gseControlName =
-      this.currentSelectedGseControl?.getAttribute('name') ?? undefined;
+    const controlName =
+      this.currentSelectedControl?.getAttribute('name') ?? undefined;
 
     return view == View.PUBLISHER
-      ? html`<h1>
-          ${gseControlName
+      ? html`<h2>
+          ${controlName
             ? msg(
-                `IEDs subscribed to ${this.currentGooseIedName} > ${gseControlName}`,
+                `IEDs subscribed to ${this.currentControlIedName} > ${controlName}`,
               )
-            : msg('IEDs subscribed to GOOSE')}
-        </h1>`
-      : html`<h1>
+            : msg(`IEDs subscribed to ${this.serviceLabel}`)}
+        </h2>`
+      : html`<h2>
           ${this.currentSelectedIed
             ? msg(
-                `GOOSE Messages subscribed to ${this.currentSelectedIed.getAttribute('name')}`,
+                `${this.serviceLabel} Messages subscribed to ${this.currentSelectedIed.getAttribute('name')}`,
               )
-            : msg('GOOSE Messages subscribed to IED')}
-        </h1>`;
+            : msg(`${this.serviceLabel} Messages subscribed to IED`)}
+        </h2>`;
   }
 
   protected firstUpdated(): void {
@@ -462,27 +505,20 @@ export class SubscriberListGoose extends ScopedElementsMixin(
         ${this.renderTitle()}
         ${this.availableElements.length != 0 ||
         this.subscribedElements.length != 0
-          ? html`<div class="wrapper">
-              <filtered-list>
-                ${this.renderFullSubscribers()}
-                ${this.renderPartiallySubscribers(
-                  this.availableElements.filter(element => element.partial),
-                )}
-                ${this.renderUnSubscribers(
-                  this.availableElements.filter(element => !element.partial),
-                )}
-              </filtered-list>
-            </div>`
-          : html`<oscd-list>
-              <oscd-list-item type="text">
-                <span>${
-                  view == View.PUBLISHER
-                    ? msg('No control block selected')
-                    : msg('No IED selected')
-                }</span>
-              </oscd-list-item>
-            </oscd-list>
-          </div>`}
+          ? html`<virtualized-filtered-list
+              .items=${this.buildRows()}
+              .renderItem=${this.renderRow}
+              .matchItem=${this.matchRow}
+              .keyFunction=${this.rowKey}
+            ></virtualized-filtered-list>`
+          : html`<div class="empty-state">
+              <oscd-icon class="empty-state__icon">list_alt_check</oscd-icon>
+              <h3 class="empty-state__title">
+                ${view == View.PUBLISHER
+                  ? msg('No control block selected')
+                  : msg('No IED selected')}
+              </h3>
+            </div> `}
       </section>
     `;
   }
@@ -490,9 +526,58 @@ export class SubscriberListGoose extends ScopedElementsMixin(
   static styles = css`
     ${styles}
 
-    .wrapper {
-      height: 100vh;
-      overflow-y: scroll;
+    :host {
+      display: flex;
+      flex-direction: column;
+    }
+
+    section {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    .empty-state {
+      font-family: var(--oscd-font-family, 'Roboto', sans-serif);
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 12px;
+      padding: 32px 24px;
+      box-sizing: border-box;
+      background-color: var(--oscd-base2);
+    }
+
+    .empty-state__icon {
+      font-size: 128px;
+      inline-size: 128px;
+      block-size: 128px;
+      line-height: 1;
+      color: var(--oscd-base01);
+      opacity: 0.7;
+    }
+
+    .empty-state__title {
+      margin: 0;
+      font-size: 1.125rem;
+      line-height: 1.4;
+      font-weight: 500;
+      color: var(--oscd-base01);
+    }
+
+    .empty-state__description {
+      margin: 0;
+      max-width: 32rem;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(
+        --oscd-base01,
+        var(--md-sys-color-on-surface-variant, #49454f)
+      );
     }
   `;
 }
