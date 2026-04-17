@@ -12,6 +12,7 @@ export declare class IedList extends IedList_base {
     doc: XMLDocument;
     docVersion?: unknown;
     serviceType?: 'goose' | 'smv';
+    private selectedIed;
     private onOpenDocReset;
     connectedCallback(): void;
     disconnectedCallback(): void;

@@ -72360,6 +72360,12 @@ VirtualizedFilteredList.styles = i$7 `
       flex: 1 1 auto;
       min-height: 0;
     }
+
+    oscd-list-item.selected {
+      --md-sys-color-on-surface: var(--oscd-base3);
+      --md-sys-color-on-surface-variant: var(--oscd-base2);
+      background-color: var(--oscd-primary);
+    }
   `;
 __decorate([
     n$4({ attribute: false })
@@ -75156,9 +75162,13 @@ class ControlBlockList extends ScopedElementsMixin(i$4) {
         }
     }
     renderControl(control) {
+        const classes = {
+            selected: this.selectedControl === control,
+        };
         return b `<oscd-list-item
-      @click=${() => this.onSelect(control)}
       type="button"
+      class="${e(classes)}"
+      @click=${() => this.onSelect(control)}
       data-value="${identity(control)}"
     >
       <oscd-icon slot="start">${this.controlIcon}</oscd-icon>
@@ -75311,17 +75321,23 @@ __decorate([
     e$3('.control-block-menu')
 ], ControlBlockList.prototype, "controlBlockMenu", void 0);
 
-let selectedIed;
 class IedList extends ScopedElementsMixin(i$4) {
     constructor() {
         super(...arguments);
         this.onOpenDocReset = () => {
-            selectedIed = undefined;
+            this.selectedIed = undefined;
         };
         this.renderIedItem = (item) => {
             const ied = item;
+            const classes = {
+                selected: this.selectedIed === ied,
+            };
             return b `
-      <oscd-list-item @click=${() => this.onIedSelect(ied)} type="button">
+      <oscd-list-item
+        type="button"
+        class="${e(classes)}"
+        @click=${() => this.onIedSelect(ied)}
+      >
         <span>${getNameAttribute(ied)}</span>
         <oscd-icon slot="start">developer_board</oscd-icon>
       </oscd-list-item>
@@ -75345,14 +75361,14 @@ class IedList extends ScopedElementsMixin(i$4) {
         super.disconnectedCallback();
     }
     onIedSelect(element) {
-        selectedIed = element;
-        this.dispatchEvent(newIEDSelectEvent(selectedIed));
+        this.selectedIed = element;
+        this.dispatchEvent(newIEDSelectEvent(this.selectedIed));
     }
     updated() {
-        this.dispatchEvent(newIEDSelectEvent(selectedIed));
+        this.dispatchEvent(newIEDSelectEvent(this.selectedIed));
     }
     firstUpdated() {
-        selectedIed = undefined;
+        this.selectedIed = undefined;
     }
     render() {
         return b ` <section tabindex="0">
@@ -75394,6 +75410,9 @@ __decorate([
 __decorate([
     n$4({ type: String })
 ], IedList.prototype, "serviceType", void 0);
+__decorate([
+    r$3()
+], IedList.prototype, "selectedIed", void 0);
 
 const serviceTypeStorageKey = 'oscd-editor-subscriber-msgbinding$serviceType';
 const viewStorageKey = 'oscd-editor-subscriber-msgbinding$view';
