@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.3](https://github.com/OMICRONEnergyOSS/oscd-editor-subscriber-msgbinding/compare/oscd-editor-subscriber-msgbinding-v0.0.2...oscd-editor-subscriber-msgbinding-v0.0.3) (2026-04-17)
+
+
+### Bug Fixes
+
+* selected control-blocks and IEDs should appear highlighted ([891351e](https://github.com/OMICRONEnergyOSS/oscd-editor-subscriber-msgbinding/commit/891351e560c385a3e533d91050a69535de214ce0))
+
 ## [0.0.2](https://github.com/OMICRONEnergyOSS/oscd-editor-subscriber-msgbinding/compare/oscd-editor-subscriber-msgbinding-v0.0.1...oscd-editor-subscriber-msgbinding-v0.0.2) (2026-04-17)
 
 
