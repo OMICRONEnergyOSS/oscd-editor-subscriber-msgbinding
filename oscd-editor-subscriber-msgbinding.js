@@ -75406,10 +75406,11 @@ class OscdEditorSubscriberMsgBinding extends ScopedElementsMixin(i$4) {
         this.view = localStorage.getItem(viewStorageKey) === 'subscriber'
             ? View.SUBSCRIBER
             : View.PUBLISHER;
-        this.handleEditDialogEvent = (event) => {
+        this.handleEditDialogEvent = async (event) => {
             event.stopPropagation();
             const detail = event.detail;
-            this.sclDialogs.edit(detail);
+            const edits = await this.sclDialogs.edit(detail);
+            this.dispatchEvent(newEditEventV2(edits));
         };
         this.addEventListener('view', ((evt) => {
             this.view = evt.detail.view;
