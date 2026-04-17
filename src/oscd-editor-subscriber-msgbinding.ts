@@ -15,6 +15,7 @@ import { ServiceType } from './foundation.js';
 import { SubscriberList } from './components/subscriber-list.js';
 import { ControlBlockList } from './components/control-block-list.js';
 import { IedList } from './components/ied-list.js';
+import { newEditEventV2 } from '@openscd/oscd-api/utils.js';
 
 const serviceTypeStorageKey = 'oscd-editor-subscriber-msgbinding$serviceType';
 const viewStorageKey = 'oscd-editor-subscriber-msgbinding$view';
@@ -56,10 +57,11 @@ export default class OscdEditorSubscriberMsgBinding extends ScopedElementsMixin(
   @query('oscd-scl-dialogs')
   private sclDialogs!: OscdSclDialogs;
 
-  private handleEditDialogEvent = (event: Event): void => {
+  private handleEditDialogEvent = async (event: Event): Promise<void> => {
     event.stopPropagation();
     const detail = (event as CustomEvent).detail;
-    this.sclDialogs.edit(detail);
+    const edits = await this.sclDialogs.edit(detail);
+    this.dispatchEvent(newEditEventV2(edits));
   };
 
   constructor() {

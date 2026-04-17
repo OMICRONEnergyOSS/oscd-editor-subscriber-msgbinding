@@ -136,6 +136,14 @@
             },
             {
               "kind": "field",
+              "name": "view",
+              "type": {
+                "text": "View"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
               "name": "listDiv",
               "type": {
                 "text": "Element"
