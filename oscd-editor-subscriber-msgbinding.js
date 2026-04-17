@@ -72400,7 +72400,7 @@ function newControlSubscriptionEvent(element, subscribeStatus) {
 }
 
 /** Defining view outside the class, which makes it persistent. */
-let view$1 = View.PUBLISHER;
+let view = View.PUBLISHER;
 /** An element for subscribing and unsubscribing IEDs to GOOSE/SMV messages. */
 class SubscriberList extends ScopedElementsMixin(SubscriberListContainer) {
     constructor() {
@@ -72488,7 +72488,7 @@ class SubscriberList extends ScopedElementsMixin(SubscriberListContainer) {
         };
         this.onControlSubscriptionEvent = (event) => {
             let iedToSubscribe = event.detail.element;
-            if (view$1 == View.SUBSCRIBER) {
+            if (view == View.SUBSCRIBER) {
                 const dataSetName = event.detail.element.getAttribute('datSet');
                 this.currentUsedDataset =
                     event.detail.element.parentElement?.querySelector(`DataSet[name="${dataSetName}"]`);
@@ -72514,7 +72514,7 @@ class SubscriberList extends ScopedElementsMixin(SubscriberListContainer) {
             }
         };
         this.onViewChange = (event) => {
-            view$1 = event.detail.view;
+            view = event.detail.view;
             this.currentSelectedIed = undefined;
             this.currentSelectedControl = undefined;
             this.resetElements();
@@ -72617,7 +72617,7 @@ class SubscriberList extends ScopedElementsMixin(SubscriberListContainer) {
         let firstSubscribedExtRef = null;
         let supervisionNode = null;
         if (status !== SubscribeStatus.None) {
-            if (view$1 === View.PUBLISHER) {
+            if (view === View.PUBLISHER) {
                 firstSubscribedExtRef = getFirstSubscribedExtRef(this.currentSelectedControl, element);
                 supervisionNode = getExistingSupervision(firstSubscribedExtRef);
             }
@@ -72633,7 +72633,7 @@ class SubscriberList extends ScopedElementsMixin(SubscriberListContainer) {
       type="button"
     >
       <span
-        >${view$1 == View.PUBLISHER
+        >${view == View.PUBLISHER
             ? element.getAttribute('name')
             : element.getAttribute('name') +
                 ` (${element.closest('IED')?.getAttribute('name')})`}</span
@@ -72686,7 +72686,7 @@ class SubscriberList extends ScopedElementsMixin(SubscriberListContainer) {
     }
     renderTitle() {
         const controlName = this.currentSelectedControl?.getAttribute('name') ?? undefined;
-        return view$1 == View.PUBLISHER
+        return view == View.PUBLISHER
             ? b `<h2>
           ${controlName
                 ? msg(`IEDs subscribed to ${this.currentControlIedName} > ${controlName}`)
@@ -72716,7 +72716,7 @@ class SubscriberList extends ScopedElementsMixin(SubscriberListContainer) {
             : b `<div class="empty-state">
               <oscd-icon class="empty-state__icon">list_alt_check</oscd-icon>
               <h3 class="empty-state__title">
-                ${view$1 == View.PUBLISHER
+                ${view == View.PUBLISHER
                 ? msg('No control block selected')
                 : msg('No IED selected')}
               </h3>
@@ -75397,24 +75397,23 @@ __decorate([
 
 const serviceTypeStorageKey = 'oscd-editor-subscriber-msgbinding$serviceType';
 const viewStorageKey = 'oscd-editor-subscriber-msgbinding$view';
-/** Defining view outside the class, which makes it persistent. */
-let view = localStorage.getItem(viewStorageKey) === 'subscriber'
-    ? View.SUBSCRIBER
-    : View.PUBLISHER;
 /** An editor plugin for subscribing IEDs to GOOSE and SMV messages. */
 class OscdEditorSubscriberMsgBinding extends ScopedElementsMixin(i$4) {
     constructor() {
         super();
         this.serviceType = localStorage.getItem(serviceTypeStorageKey) ??
             'goose';
+        this.view = localStorage.getItem(viewStorageKey) === 'subscriber'
+            ? View.SUBSCRIBER
+            : View.PUBLISHER;
         this.handleEditDialogEvent = (event) => {
             event.stopPropagation();
             const detail = event.detail;
             this.sclDialogs.edit(detail);
         };
         this.addEventListener('view', ((evt) => {
-            view = evt.detail.view;
-            localStorage.setItem(viewStorageKey, view === View.PUBLISHER ? 'publisher' : 'subscriber');
+            this.view = evt.detail.view;
+            localStorage.setItem(viewStorageKey, this.view === View.PUBLISHER ? 'publisher' : 'subscriber');
             this.requestUpdate();
         }));
     }
@@ -75439,19 +75438,19 @@ class OscdEditorSubscriberMsgBinding extends ScopedElementsMixin(i$4) {
         <oscd-outlined-segmented-button
           label="${msg('Publishers')}"
           no-checkmark
-          ?selected=${view === View.PUBLISHER}
+          ?selected=${this.view === View.PUBLISHER}
           @click=${() => this.setView(View.PUBLISHER)}
         >
         </oscd-outlined-segmented-button>
         <oscd-outlined-segmented-button
           label="${msg('Subscribers')}"
           no-checkmark
-          ?selected=${view === View.SUBSCRIBER}
+          ?selected=${this.view === View.SUBSCRIBER}
           @click=${() => this.setView(View.SUBSCRIBER)}
         >
         </oscd-outlined-segmented-button>
       </oscd-outlined-segmented-button-set>
-      ${view === View.PUBLISHER
+      ${this.view === View.PUBLISHER
             ? b `<control-block-list
             .docVersion=${this.docVersion}
             .doc=${this.doc}
@@ -75460,7 +75459,7 @@ class OscdEditorSubscriberMsgBinding extends ScopedElementsMixin(i$4) {
             : b `<ied-list
             .docVersion=${this.docVersion}
             .doc=${this.doc}
-            serviceType=${this.serviceType}
+            .serviceType=${this.serviceType}
           ></ied-list>`}
     </div>`;
     }
@@ -75637,6 +75636,9 @@ __decorate([
 __decorate([
     n$4({ type: String })
 ], OscdEditorSubscriberMsgBinding.prototype, "serviceType", void 0);
+__decorate([
+    r$3()
+], OscdEditorSubscriberMsgBinding.prototype, "view", void 0);
 __decorate([
     e$3('div[class="container"]')
 ], OscdEditorSubscriberMsgBinding.prototype, "listDiv", void 0);

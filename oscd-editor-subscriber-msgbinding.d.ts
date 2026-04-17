@@ -22,6 +22,7 @@ export default class OscdEditorSubscriberMsgBinding extends OscdEditorSubscriber
     doc: XMLDocument;
     docVersion?: unknown;
     serviceType: ServiceType;
+    private view;
     listDiv: Element;
     private sclDialogs;
     private handleEditDialogEvent;
