@@ -138,5 +138,11 @@ export class VirtualizedFilteredList extends ScopedElementsMixin(LitElement) {
       flex: 1 1 auto;
       min-height: 0;
     }
+
+    oscd-list-item.selected {
+      --md-sys-color-on-surface: var(--oscd-base3);
+      --md-sys-color-on-surface-variant: var(--oscd-base2);
+      background-color: var(--oscd-primary);
+    }
   `;
 }

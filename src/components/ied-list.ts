@@ -1,5 +1,5 @@
 import { css, html, LitElement, TemplateResult } from 'lit';
-import { property } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
 import { ScopedElementsMixin } from '@open-wc/scoped-elements/lit-element.js';
 
 import { OscdIcon } from '@omicronenergy/oscd-ui/icon/OscdIcon.js';
@@ -12,8 +12,7 @@ import {
   newIEDSelectEvent,
   styles,
 } from '../foundation/subscription.js';
-
-let selectedIed: Element | undefined;
+import { classMap } from 'lit/directives/class-map.js';
 
 export class IedList extends ScopedElementsMixin(LitElement) {
   static scopedElements = {
@@ -31,8 +30,11 @@ export class IedList extends ScopedElementsMixin(LitElement) {
   @property({ type: String })
   serviceType?: 'goose' | 'smv';
 
+  @state()
+  private selectedIed: Element | undefined;
+
   private onOpenDocReset = (): void => {
-    selectedIed = undefined;
+    this.selectedIed = undefined;
   };
 
   connectedCallback(): void {
@@ -46,22 +48,29 @@ export class IedList extends ScopedElementsMixin(LitElement) {
   }
 
   private onIedSelect(element: Element): void {
-    selectedIed = element;
-    this.dispatchEvent(newIEDSelectEvent(selectedIed));
+    this.selectedIed = element;
+    this.dispatchEvent(newIEDSelectEvent(this.selectedIed));
   }
 
   protected updated(): void {
-    this.dispatchEvent(newIEDSelectEvent(selectedIed));
+    this.dispatchEvent(newIEDSelectEvent(this.selectedIed));
   }
 
   protected firstUpdated(): void {
-    selectedIed = undefined;
+    this.selectedIed = undefined;
   }
 
   private renderIedItem = (item: unknown): TemplateResult => {
     const ied = item as Element;
+    const classes = {
+      selected: this.selectedIed === ied,
+    };
     return html`
-      <oscd-list-item @click=${() => this.onIedSelect(ied)} type="button">
+      <oscd-list-item
+        type="button"
+        class="${classMap(classes)}"
+        @click=${() => this.onIedSelect(ied)}
+      >
         <span>${getNameAttribute(ied)}</span>
         <oscd-icon slot="start">developer_board</oscd-icon>
       </oscd-list-item>

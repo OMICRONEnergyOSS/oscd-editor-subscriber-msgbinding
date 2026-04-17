@@ -184,9 +184,14 @@ export class ControlBlockList extends ScopedElementsMixin(LitElement) {
   }
 
   private renderControl(control: Element): TemplateResult {
+    const classes = {
+      selected: this.selectedControl === control,
+    };
+
     return html`<oscd-list-item
-      @click=${() => this.onSelect(control)}
       type="button"
+      class="${classMap(classes)}"
+      @click=${() => this.onSelect(control)}
       data-value="${identity(control)}"
     >
       <oscd-icon slot="start">${this.controlIcon}</oscd-icon>
@@ -296,6 +301,7 @@ export class ControlBlockList extends ScopedElementsMixin(LitElement) {
 
   private renderRow = (item: unknown): TemplateResult => {
     const row = item as ControlBlockRow;
+
     if (row.type === 'ied-header') {
       return html`
         <oscd-list-item type="text">
