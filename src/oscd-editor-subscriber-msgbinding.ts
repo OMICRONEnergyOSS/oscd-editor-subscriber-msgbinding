@@ -1,5 +1,5 @@
 import { css, html, LitElement, TemplateResult } from 'lit';
-import { property, query } from 'lit/decorators.js';
+import { property, query, state } from 'lit/decorators.js';
 import { msg } from '@lit/localize';
 import { ScopedElementsMixin } from '@open-wc/scoped-elements/lit-element.js';
 
@@ -18,12 +18,6 @@ import { IedList } from './components/ied-list.js';
 
 const serviceTypeStorageKey = 'oscd-editor-subscriber-msgbinding$serviceType';
 const viewStorageKey = 'oscd-editor-subscriber-msgbinding$view';
-
-/** Defining view outside the class, which makes it persistent. */
-let view: View =
-  localStorage.getItem(viewStorageKey) === 'subscriber'
-    ? View.SUBSCRIBER
-    : View.PUBLISHER;
 
 /** An editor plugin for subscribing IEDs to GOOSE and SMV messages. */
 export default class OscdEditorSubscriberMsgBinding extends ScopedElementsMixin(
@@ -50,6 +44,12 @@ export default class OscdEditorSubscriberMsgBinding extends ScopedElementsMixin(
     (localStorage.getItem(serviceTypeStorageKey) as ServiceType | null) ??
     'goose';
 
+  @state()
+  private view: View =
+    localStorage.getItem(viewStorageKey) === 'subscriber'
+      ? View.SUBSCRIBER
+      : View.PUBLISHER;
+
   @query('div[class="container"]')
   listDiv!: Element;
 
@@ -65,10 +65,10 @@ export default class OscdEditorSubscriberMsgBinding extends ScopedElementsMixin(
   constructor() {
     super();
     this.addEventListener('view', ((evt: ViewEvent) => {
-      view = evt.detail.view;
+      this.view = evt.detail.view;
       localStorage.setItem(
         viewStorageKey,
-        view === View.PUBLISHER ? 'publisher' : 'subscriber',
+        this.view === View.PUBLISHER ? 'publisher' : 'subscriber',
       );
       this.requestUpdate();
     }) as EventListener);
@@ -102,19 +102,19 @@ export default class OscdEditorSubscriberMsgBinding extends ScopedElementsMixin(
         <oscd-outlined-segmented-button
           label="${msg('Publishers')}"
           no-checkmark
-          ?selected=${view === View.PUBLISHER}
+          ?selected=${this.view === View.PUBLISHER}
           @click=${() => this.setView(View.PUBLISHER)}
         >
         </oscd-outlined-segmented-button>
         <oscd-outlined-segmented-button
           label="${msg('Subscribers')}"
           no-checkmark
-          ?selected=${view === View.SUBSCRIBER}
+          ?selected=${this.view === View.SUBSCRIBER}
           @click=${() => this.setView(View.SUBSCRIBER)}
         >
         </oscd-outlined-segmented-button>
       </oscd-outlined-segmented-button-set>
-      ${view === View.PUBLISHER
+      ${this.view === View.PUBLISHER
         ? html`<control-block-list
             .docVersion=${this.docVersion}
             .doc=${this.doc}
@@ -123,7 +123,7 @@ export default class OscdEditorSubscriberMsgBinding extends ScopedElementsMixin(
         : html`<ied-list
             .docVersion=${this.docVersion}
             .doc=${this.doc}
-            serviceType=${this.serviceType}
+            .serviceType=${this.serviceType}
           ></ied-list>`}
     </div>`;
   }
