@@ -2,7 +2,7 @@ import { LitElement, TemplateResult } from 'lit';
 import { OscdIcon } from '@omicronenergy/oscd-ui/icon/OscdIcon.js';
 import { OscdListItem } from '@omicronenergy/oscd-ui/list/OscdListItem.js';
 import { VirtualizedFilteredList } from '../foundation/virtualized-filtered-list.js';
-declare const IedList_base: typeof LitElement & import("@open-wc/scoped-elements/lit-element.js").ScopedElementsHostConstructor;
+declare const IedList_base: typeof LitElement & import("@open-wc/dedupe-mixin").Constructor<import("@open-wc/scoped-elements/types.js").ScopedElementsHost> & import("@open-wc/scoped-elements/types.js").ScopedElementsHostConstructor;
 export declare class IedList extends IedList_base {
     static scopedElements: {
         'oscd-icon': typeof OscdIcon;

@@ -7,7 +7,7 @@ import { OscdMenu } from '@omicronenergy/oscd-ui/menu/OscdMenu.js';
 import { OscdMenuItem } from '@omicronenergy/oscd-ui/menu/OscdMenuItem.js';
 import { VirtualizedFilteredList } from '../foundation/virtualized-filtered-list.js';
 import { ServiceType } from '../foundation.js';
-declare const ControlBlockList_base: typeof LitElement & import("@open-wc/scoped-elements/lit-element.js").ScopedElementsHostConstructor;
+declare const ControlBlockList_base: typeof LitElement & import("@open-wc/dedupe-mixin").Constructor<import("@open-wc/scoped-elements/types.js").ScopedElementsHost> & import("@open-wc/scoped-elements/types.js").ScopedElementsHostConstructor;
 export declare class ControlBlockList extends ControlBlockList_base {
     static scopedElements: {
         'oscd-icon': typeof OscdIcon;

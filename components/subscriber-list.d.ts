@@ -6,7 +6,7 @@ import { OscdDivider } from '@omicronenergy/oscd-ui/divider/OscdDivider.js';
 import { VirtualizedFilteredList } from '../foundation/virtualized-filtered-list.js';
 import { ServiceType } from '../foundation.js';
 import { SubscriberListContainer, SubscribeStatus } from '../foundation/subscription.js';
-declare const SubscriberList_base: typeof SubscriberListContainer & import("@open-wc/scoped-elements/lit-element.js").ScopedElementsHostConstructor;
+declare const SubscriberList_base: typeof SubscriberListContainer & import("@open-wc/dedupe-mixin").Constructor<import("@open-wc/scoped-elements/types.js").ScopedElementsHost> & import("@open-wc/scoped-elements/types.js").ScopedElementsHostConstructor;
 /** An element for subscribing and unsubscribing IEDs to GOOSE/SMV messages. */
 export declare class SubscriberList extends SubscriberList_base {
     static scopedElements: {

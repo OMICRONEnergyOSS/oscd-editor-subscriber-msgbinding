@@ -7,7 +7,7 @@ import { ServiceType } from './foundation.js';
 import { SubscriberList } from './components/subscriber-list.js';
 import { ControlBlockList } from './components/control-block-list.js';
 import { IedList } from './components/ied-list.js';
-declare const OscdEditorSubscriberMsgBinding_base: typeof LitElement & import("@open-wc/scoped-elements/lit-element.js").ScopedElementsHostConstructor;
+declare const OscdEditorSubscriberMsgBinding_base: typeof LitElement & import("@open-wc/dedupe-mixin").Constructor<import("@open-wc/scoped-elements/types.js").ScopedElementsHost> & import("@open-wc/scoped-elements/types.js").ScopedElementsHostConstructor;
 /** An editor plugin for subscribing IEDs to GOOSE and SMV messages. */
 export default class OscdEditorSubscriberMsgBinding extends OscdEditorSubscriberMsgBinding_base {
     static scopedElements: {
