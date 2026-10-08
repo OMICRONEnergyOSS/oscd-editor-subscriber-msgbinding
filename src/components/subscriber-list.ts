@@ -105,7 +105,9 @@ export class SubscriberList extends ScopedElementsMixin(
   }
 
   private onIEDSelectEvent = (event: IEDSelectEvent): void => {
-    if (!event.detail.ied) return;
+    if (!event.detail.ied) {
+      return;
+    }
     this.currentSelectedIed = event.detail.ied!;
 
     this.resetElements();
@@ -116,14 +118,15 @@ export class SubscriberList extends ScopedElementsMixin(
 
     Array.from(this.doc.querySelectorAll(this.controlSelector))
       .filter(cb => cb.hasAttribute('datSet'))
-      .forEach(control => {
+      .forEach((control) => {
         const ied = control.closest('IED')!;
 
         if (
           ied.getAttribute('name') ==
           this.currentSelectedIed?.getAttribute('name')
-        )
+        ) {
           return;
+        }
 
         if (subscribedInputs.length == 0) {
           this.availableElements.push({ element: control });
@@ -135,10 +138,12 @@ export class SubscriberList extends ScopedElementsMixin(
           `DataSet[name="${control.getAttribute('datSet')}"]`,
         );
 
-        if (!dataSet) return;
+        if (!dataSet) {
+          return;
+        }
 
-        dataSet!.querySelectorAll('FCDA').forEach(fcda => {
-          subscribedInputs.forEach(inputs => {
+        dataSet!.querySelectorAll('FCDA').forEach((fcda) => {
+          subscribedInputs.forEach((inputs) => {
             if (getExtRef(inputs, fcda, control)) {
               numberOfLinkedExtRefs++;
             }
@@ -161,7 +166,9 @@ export class SubscriberList extends ScopedElementsMixin(
   };
 
   private onControlSelectEvent = (event: ControlSelectEvent): void => {
-    if (!event.detail.dataset || !event.detail.controlBlock) return;
+    if (!event.detail.dataset || !event.detail.controlBlock) {
+      return;
+    }
 
     this.currentSelectedControl = event.detail.controlBlock;
     this.currentUsedDataset = event.detail.dataset;
@@ -173,7 +180,7 @@ export class SubscriberList extends ScopedElementsMixin(
 
     Array.from(this.doc.querySelectorAll(':root > IED'))
       .filter(ied => ied.getAttribute('name') != this.currentControlIedName)
-      .forEach(ied => {
+      .forEach((ied) => {
         const inputElements = ied.querySelectorAll(`LN0 > Inputs, LN > Inputs`);
 
         let numberOfLinkedExtRefs = 0;
@@ -183,8 +190,8 @@ export class SubscriberList extends ScopedElementsMixin(
           return;
         }
 
-        this.currentUsedDataset!.querySelectorAll('FCDA').forEach(fcda => {
-          inputElements.forEach(inputs => {
+        this.currentUsedDataset!.querySelectorAll('FCDA').forEach((fcda) => {
+          inputElements.forEach((inputs) => {
             if (getExtRef(inputs, fcda, this.currentSelectedControl)) {
               numberOfLinkedExtRefs++;
             }
@@ -294,11 +301,13 @@ export class SubscriberList extends ScopedElementsMixin(
   }
 
   private subscribeIed(ied: Element): void {
-    if (!ied.querySelector('LN0')) return;
+    if (!ied.querySelector('LN0')) {
+      return;
+    }
 
     const allEdits: EditV2[] = [];
 
-    this.currentUsedDataset!.querySelectorAll('FCDA').forEach(fcda => {
+    this.currentUsedDataset!.querySelectorAll('FCDA').forEach((fcda) => {
       const edits = subscribe({
         sink: ied.querySelector('LN0')!,
         source: {
@@ -318,14 +327,18 @@ export class SubscriberList extends ScopedElementsMixin(
 
   private unsubscribeIed(ied: Element): void {
     const extRefs: Element[] = [];
-    ied.querySelectorAll('LN0 > Inputs, LN > Inputs').forEach(inputs => {
-      this.currentUsedDataset!.querySelectorAll('FCDA').forEach(fcda => {
+    ied.querySelectorAll('LN0 > Inputs, LN > Inputs').forEach((inputs) => {
+      this.currentUsedDataset!.querySelectorAll('FCDA').forEach((fcda) => {
         const extRef = getExtRef(inputs, fcda, this.currentSelectedControl);
-        if (extRef) extRefs.push(extRef);
+        if (extRef) {
+          extRefs.push(extRef);
+        }
       });
     });
 
-    if (extRefs.length === 0) return;
+    if (extRefs.length === 0) {
+      return;
+    }
 
     const edits = unsubscribe(extRefs);
     if (edits.length > 0) {
@@ -336,7 +349,7 @@ export class SubscriberList extends ScopedElementsMixin(
   }
 
   renderSubscriber(status: SubscribeStatus, element: Element): TemplateResult {
-    let firstSubscribedExtRef: Element | null = null;
+    let firstSubscribedExtRef: Element | null;
     let supervisionNode: Element | null = null;
     if (status !== SubscribeStatus.None) {
       if (view === View.PUBLISHER) {
@@ -392,7 +405,7 @@ export class SubscriberList extends ScopedElementsMixin(
 
     if (elements.length > 0) {
       result.push(
-        ...elements.map(el => {
+        ...elements.map((el) => {
           const id = identity(el.element) as string;
           return {
             type: 'subscriber' as const,
@@ -482,15 +495,15 @@ export class SubscriberList extends ScopedElementsMixin(
       ? html`<h2>
           ${controlName
             ? msg(
-                `IEDs subscribed to ${this.currentControlIedName} > ${controlName}`,
-              )
+              `IEDs subscribed to ${this.currentControlIedName} > ${controlName}`,
+            )
             : msg(`IEDs subscribed to ${this.serviceLabel}`)}
         </h2>`
       : html`<h2>
           ${this.currentSelectedIed
             ? msg(
-                `${this.serviceLabel} Messages subscribed to ${this.currentSelectedIed.getAttribute('name')}`,
-              )
+              `${this.serviceLabel} Messages subscribed to ${this.currentSelectedIed.getAttribute('name')}`,
+            )
             : msg(`${this.serviceLabel} Messages subscribed to IED`)}
         </h2>`;
   }

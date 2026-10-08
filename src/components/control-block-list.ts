@@ -114,7 +114,9 @@ export class ControlBlockList extends ScopedElementsMixin(LitElement) {
   }
 
   private onSelect(control: Element): void {
-    if (control === this.selectedControl) return;
+    if (control === this.selectedControl) {
+      return;
+    }
 
     const ln = control.parentElement;
     const dataset = ln?.querySelector(
@@ -140,12 +142,16 @@ export class ControlBlockList extends ScopedElementsMixin(LitElement) {
   }
 
   private onMenuEdit(): void {
-    if (!this.menuControlElement) return;
+    if (!this.menuControlElement) {
+      return;
+    }
     this.dispatchEvent(newEditDialogEditEvent(this.menuControlElement));
   }
 
   private onMenuEditDataSet(): void {
-    if (!this.menuControlElement) return;
+    if (!this.menuControlElement) {
+      return;
+    }
     const dataSet = getAssociatedDataSet(this.menuControlElement);
     if (dataSet) {
       this.dispatchEvent(newEditDialogEditEvent(dataSet));
@@ -153,7 +159,9 @@ export class ControlBlockList extends ScopedElementsMixin(LitElement) {
   }
 
   private onMenuEditSmvOpts(): void {
-    if (!this.menuControlElement) return;
+    if (!this.menuControlElement) {
+      return;
+    }
     const smvOpts = getAssociatedSmvOpts(this.menuControlElement);
     if (smvOpts) {
       this.dispatchEvent(newEditDialogEditEvent(smvOpts));
@@ -161,7 +169,9 @@ export class ControlBlockList extends ScopedElementsMixin(LitElement) {
   }
 
   private onMenuEditCommunication(): void {
-    if (!this.menuControlElement) return;
+    if (!this.menuControlElement) {
+      return;
+    }
     const communication = getAssociatedCommunication(this.menuControlElement);
     if (communication) {
       this.dispatchEvent(newEditDialogEditEvent(communication));
@@ -169,7 +179,9 @@ export class ControlBlockList extends ScopedElementsMixin(LitElement) {
   }
 
   private onMenuRemove(): void {
-    if (!this.menuControlElement) return;
+    if (!this.menuControlElement) {
+      return;
+    }
     const edits = buildRemoveEdits(this.menuControlElement);
     if (edits.length > 0) {
       this.dispatchEvent(
@@ -268,7 +280,7 @@ export class ControlBlockList extends ScopedElementsMixin(LitElement) {
 
       const iedName = getNameAttribute(ied) ?? '';
       const controlSearchText = controls
-        .map(element => {
+        .map((element) => {
           const id = identity(element) as string;
           return typeof id === 'string' ? id : '';
         })
@@ -318,7 +330,9 @@ export class ControlBlockList extends ScopedElementsMixin(LitElement) {
 
   private matchRow = (item: unknown, regex: RegExp): boolean => {
     const row = item as ControlBlockRow;
-    if (row.type === 'ied-divider') return true;
+    if (row.type === 'ied-divider') {
+      return true;
+    }
     return regex.test(row.searchText);
   };
 

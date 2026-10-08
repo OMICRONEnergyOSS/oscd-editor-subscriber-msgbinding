@@ -179,8 +179,8 @@ export function getFirstSubscribedExtRef(
   let extRef: Element | undefined = undefined;
   Array.from(
     subscribingIed?.querySelectorAll('LN0 > Inputs, LN > Inputs'),
-  ).some(inputs => {
-    Array.from(dataSet!.querySelectorAll('FCDA')).some(fcda => {
+  ).some((inputs) => {
+    Array.from(dataSet!.querySelectorAll('FCDA')).some((fcda) => {
       const anExtRef = getExtRef(inputs, fcda, publishedControlBlock);
       if (anExtRef) {
         extRef = anExtRef;
@@ -268,8 +268,8 @@ export const serviceTypes: Partial<Record<string, string>> = {
 export function getOrderedIeds(doc: XMLDocument): Element[] {
   return doc
     ? Array.from(doc.querySelectorAll(':root > IED')).sort((a, b) =>
-        compareNames(a, b),
-      )
+      compareNames(a, b),
+    )
     : [];
 }
 
