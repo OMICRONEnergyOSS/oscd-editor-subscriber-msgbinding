@@ -75714,8 +75714,8 @@ function getFirstSubscribedExtRef(publishedControlBlock, subscribingIed) {
     const publishingIed = publishedControlBlock.closest('LN,LN0');
     const dataSet = publishingIed.querySelector(`DataSet[name="${publishedControlBlock.getAttribute('datSet')}"]`);
     let extRef = undefined;
-    Array.from(subscribingIed?.querySelectorAll('LN0 > Inputs, LN > Inputs')).some(inputs => {
-        Array.from(dataSet.querySelectorAll('FCDA')).some(fcda => {
+    Array.from(subscribingIed?.querySelectorAll('LN0 > Inputs, LN > Inputs')).some((inputs) => {
+        Array.from(dataSet.querySelectorAll('FCDA')).some((fcda) => {
             const anExtRef = getExtRef(inputs, fcda, publishedControlBlock);
             if (anExtRef) {
                 extRef = anExtRef;
@@ -76790,6 +76790,22 @@ const styles$9 = i$7 `:host{box-sizing:border-box;color:var(--md-divider-color, 
 class OscdDivider extends Divider {
 }
 OscdDivider.styles = [styles$9];
+
+function subscribeDataSetToIed(ied, dataSet, controlBlock) {
+    const ln0 = ied.querySelector('LN0');
+    if (!ln0) {
+        return [];
+    }
+    const inputs = ln0.querySelector(':scope > Inputs');
+    const sink = inputs ?? ln0;
+    const connections = Array.from(dataSet.querySelectorAll('FCDA'))
+        .filter(fcda => !inputs || !getExtRef(inputs, fcda, controlBlock))
+        .map(fcda => ({
+        sink,
+        source: { fcda, controlBlock },
+    }));
+    return connections.length > 0 ? subscribe(connections) : [];
+}
 
 /**
  * @license
@@ -80611,28 +80627,31 @@ class SubscriberList extends ScopedElementsMixin(SubscriberListContainer) {
         super(...arguments);
         this.serviceType = 'goose';
         this.onIEDSelectEvent = (event) => {
-            if (!event.detail.ied)
+            if (!event.detail.ied) {
                 return;
+            }
             this.currentSelectedIed = event.detail.ied;
             this.resetElements();
             const subscribedInputs = this.currentSelectedIed.querySelectorAll(`LN0 > Inputs, LN > Inputs`);
             Array.from(this.doc.querySelectorAll(this.controlSelector))
                 .filter(cb => cb.hasAttribute('datSet'))
-                .forEach(control => {
+                .forEach((control) => {
                 const ied = control.closest('IED');
                 if (ied.getAttribute('name') ==
-                    this.currentSelectedIed?.getAttribute('name'))
+                    this.currentSelectedIed?.getAttribute('name')) {
                     return;
+                }
                 if (subscribedInputs.length == 0) {
                     this.availableElements.push({ element: control });
                     return;
                 }
                 let numberOfLinkedExtRefs = 0;
                 const dataSet = ied.querySelector(`DataSet[name="${control.getAttribute('datSet')}"]`);
-                if (!dataSet)
+                if (!dataSet) {
                     return;
-                dataSet.querySelectorAll('FCDA').forEach(fcda => {
-                    subscribedInputs.forEach(inputs => {
+                }
+                dataSet.querySelectorAll('FCDA').forEach((fcda) => {
+                    subscribedInputs.forEach((inputs) => {
                         if (getExtRef(inputs, fcda, control)) {
                             numberOfLinkedExtRefs++;
                         }
@@ -80652,8 +80671,9 @@ class SubscriberList extends ScopedElementsMixin(SubscriberListContainer) {
             this.requestUpdate();
         };
         this.onControlSelectEvent = (event) => {
-            if (!event.detail.dataset || !event.detail.controlBlock)
+            if (!event.detail.dataset || !event.detail.controlBlock) {
                 return;
+            }
             this.currentSelectedControl = event.detail.controlBlock;
             this.currentUsedDataset = event.detail.dataset;
             this.currentControlIedName = this.currentSelectedControl
@@ -80662,15 +80682,15 @@ class SubscriberList extends ScopedElementsMixin(SubscriberListContainer) {
             this.resetElements();
             Array.from(this.doc.querySelectorAll(':root > IED'))
                 .filter(ied => ied.getAttribute('name') != this.currentControlIedName)
-                .forEach(ied => {
+                .forEach((ied) => {
                 const inputElements = ied.querySelectorAll(`LN0 > Inputs, LN > Inputs`);
                 let numberOfLinkedExtRefs = 0;
                 if (!inputElements) {
                     this.availableElements.push({ element: ied });
                     return;
                 }
-                this.currentUsedDataset.querySelectorAll('FCDA').forEach(fcda => {
-                    inputElements.forEach(inputs => {
+                this.currentUsedDataset.querySelectorAll('FCDA').forEach((fcda) => {
+                    inputElements.forEach((inputs) => {
                         if (getExtRef(inputs, fcda, this.currentSelectedControl)) {
                             numberOfLinkedExtRefs++;
                         }
@@ -80784,41 +80804,31 @@ class SubscriberList extends ScopedElementsMixin(SubscriberListContainer) {
         super.disconnectedCallback();
     }
     subscribeIed(ied) {
-        if (!ied.querySelector('LN0'))
-            return;
-        const allEdits = [];
-        this.currentUsedDataset.querySelectorAll('FCDA').forEach(fcda => {
-            const edits = subscribe({
-                sink: ied.querySelector('LN0'),
-                source: {
-                    fcda,
-                    controlBlock: this.currentSelectedControl,
-                },
-            });
-            allEdits.push(...edits);
-        });
+        const allEdits = subscribeDataSetToIed(ied, this.currentUsedDataset, this.currentSelectedControl);
         if (allEdits.length > 0) {
             this.dispatchEvent(newEditEventV2(allEdits, { title: msg('Connect data attribute') }));
         }
     }
     unsubscribeIed(ied) {
         const extRefs = [];
-        ied.querySelectorAll('LN0 > Inputs, LN > Inputs').forEach(inputs => {
-            this.currentUsedDataset.querySelectorAll('FCDA').forEach(fcda => {
+        ied.querySelectorAll('LN0 > Inputs, LN > Inputs').forEach((inputs) => {
+            this.currentUsedDataset.querySelectorAll('FCDA').forEach((fcda) => {
                 const extRef = getExtRef(inputs, fcda, this.currentSelectedControl);
-                if (extRef)
+                if (extRef) {
                     extRefs.push(extRef);
+                }
             });
         });
-        if (extRefs.length === 0)
+        if (extRefs.length === 0) {
             return;
+        }
         const edits = unsubscribe(extRefs);
         if (edits.length > 0) {
             this.dispatchEvent(newEditEventV2(edits, { title: msg('Disconnect data attribute') }));
         }
     }
     renderSubscriber(status, element) {
-        let firstSubscribedExtRef = null;
+        let firstSubscribedExtRef;
         let supervisionNode = null;
         if (status !== SubscribeStatus.None) {
             if (view === View.PUBLISHER) {
@@ -80858,7 +80868,7 @@ class SubscriberList extends ScopedElementsMixin(SubscriberListContainer) {
             { type: 'divider', key: `${keyPrefix}-divider` },
         ];
         if (elements.length > 0) {
-            result.push(...elements.map(el => {
+            result.push(...elements.map((el) => {
                 const id = identity(el.element);
                 return {
                     type: 'subscriber',
@@ -83186,7 +83196,7 @@ function getAssociatedDataSet(control) {
 }
 /**
  * Returns the communication element associated with a control block.
- * The element is located in Communication > SubNetwork > ConnectedAP and matched
+ * The element is located in Communication \> SubNetwork \> ConnectedAP and matched
  * by iedName, apName, ldInst, and cbName.
  */
 function getAssociatedCommunication(control) {
@@ -83273,8 +83283,9 @@ class ControlBlockList extends ScopedElementsMixin(i$4) {
         };
         this.matchRow = (item, regex) => {
             const row = item;
-            if (row.type === 'ied-divider')
+            if (row.type === 'ied-divider') {
                 return true;
+            }
             return regex.test(row.searchText);
         };
         this.rowKey = (item) => {
@@ -83302,8 +83313,9 @@ class ControlBlockList extends ScopedElementsMixin(i$4) {
         }
     }
     onSelect(control) {
-        if (control === this.selectedControl)
+        if (control === this.selectedControl) {
             return;
+        }
         const ln = control.parentElement;
         const dataset = ln?.querySelector(`DataSet[name=${control.getAttribute('datSet')}]`);
         this.selectedControl = control;
@@ -83319,37 +83331,42 @@ class ControlBlockList extends ScopedElementsMixin(i$4) {
         this.controlBlockMenu.show();
     }
     onMenuEdit() {
-        if (!this.menuControlElement)
+        if (!this.menuControlElement) {
             return;
+        }
         this.dispatchEvent(newEditDialogEditEvent(this.menuControlElement));
     }
     onMenuEditDataSet() {
-        if (!this.menuControlElement)
+        if (!this.menuControlElement) {
             return;
+        }
         const dataSet = getAssociatedDataSet(this.menuControlElement);
         if (dataSet) {
             this.dispatchEvent(newEditDialogEditEvent(dataSet));
         }
     }
     onMenuEditSmvOpts() {
-        if (!this.menuControlElement)
+        if (!this.menuControlElement) {
             return;
+        }
         const smvOpts = getAssociatedSmvOpts(this.menuControlElement);
         if (smvOpts) {
             this.dispatchEvent(newEditDialogEditEvent(smvOpts));
         }
     }
     onMenuEditCommunication() {
-        if (!this.menuControlElement)
+        if (!this.menuControlElement) {
             return;
+        }
         const communication = getAssociatedCommunication(this.menuControlElement);
         if (communication) {
             this.dispatchEvent(newEditDialogEditEvent(communication));
         }
     }
     onMenuRemove() {
-        if (!this.menuControlElement)
+        if (!this.menuControlElement) {
             return;
+        }
         const edits = buildRemoveEdits(this.menuControlElement);
         if (edits.length > 0) {
             this.dispatchEvent(newEditEventV2(edits, {
@@ -83428,7 +83445,7 @@ class ControlBlockList extends ScopedElementsMixin(i$4) {
             const controls = Array.from(ied.querySelectorAll(selector)).filter(cb => cb.hasAttribute('datSet'));
             const iedName = getNameAttribute(ied) ?? '';
             const controlSearchText = controls
-                .map(element => {
+                .map((element) => {
                 const id = identity(element);
                 return typeof id === 'string' ? id : '';
             })
