@@ -3,7 +3,7 @@ import { property } from 'lit/decorators.js';
 import { msg } from '@lit/localize';
 import { ScopedElementsMixin } from '@open-wc/scoped-elements/lit-element.js';
 
-import { identity, subscribe, unsubscribe } from '@openscd/scl-lib';
+import { identity, unsubscribe } from '@openscd/scl-lib';
 import type { EditV2 } from '@openscd/oscd-api';
 import { newEditEventV2 } from '@openscd/oscd-api/utils.js';
 
@@ -12,6 +12,7 @@ import { OscdList } from '@omicronenergy/oscd-ui/list/OscdList.js';
 import { OscdListItem } from '@omicronenergy/oscd-ui/list/OscdListItem.js';
 import { OscdDivider } from '@omicronenergy/oscd-ui/divider/OscdDivider.js';
 
+import { subscribeDataSetToIed } from '../foundation/subscription-edits.js';
 import { VirtualizedFilteredList } from '../foundation/virtualized-filtered-list.js';
 
 import {
@@ -301,22 +302,11 @@ export class SubscriberList extends ScopedElementsMixin(
   }
 
   private subscribeIed(ied: Element): void {
-    if (!ied.querySelector('LN0')) {
-      return;
-    }
-
-    const allEdits: EditV2[] = [];
-
-    this.currentUsedDataset!.querySelectorAll('FCDA').forEach((fcda) => {
-      const edits = subscribe({
-        sink: ied.querySelector('LN0')!,
-        source: {
-          fcda,
-          controlBlock: this.currentSelectedControl,
-        },
-      });
-      allEdits.push(...edits);
-    });
+    const allEdits: EditV2[] = subscribeDataSetToIed(
+      ied,
+      this.currentUsedDataset!,
+      this.currentSelectedControl,
+    );
 
     if (allEdits.length > 0) {
       this.dispatchEvent(
