@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.4](https://github.com/OMICRONEnergyOSS/oscd-editor-subscriber-msgbinding/compare/oscd-editor-subscriber-msgbinding-v0.0.3...oscd-editor-subscriber-msgbinding-v0.0.4) (2026-10-09)
+
+
+### Bug Fixes
+
+* reuse Inputs when adding subscriber ExtRefs ([f850ea2](https://github.com/OMICRONEnergyOSS/oscd-editor-subscriber-msgbinding/commit/f850ea2e98789b8a87d576ca29dc5e5cc5630602))
+
 ## [0.0.3](https://github.com/OMICRONEnergyOSS/oscd-editor-subscriber-msgbinding/compare/oscd-editor-subscriber-msgbinding-v0.0.2...oscd-editor-subscriber-msgbinding-v0.0.3) (2026-04-17)
 
 
