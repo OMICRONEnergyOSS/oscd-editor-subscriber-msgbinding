@@ -317,16 +317,16 @@ export const styles = css`
   }
 
   section {
-    background-color: var(--mdc-theme-surface);
+    background-color: var(--md-sys-color-surface);
     transition: all 200ms linear;
-    outline-color: var(--mdc-theme-primary);
+    outline-color: var(--md-sys-color-primary);
     outline-style: solid;
     outline-width: 0px;
     opacity: 1;
   }
 
   h2 {
-    color: var(--mdc-theme-on-surface);
+    color: var(--md-sys-color-on-surface);
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
     overflow: hidden;

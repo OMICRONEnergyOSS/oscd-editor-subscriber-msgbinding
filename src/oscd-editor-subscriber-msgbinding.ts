@@ -170,7 +170,7 @@ export default class OscdEditorSubscriberMsgBinding extends ScopedElementsMixin(
 
   static styles = css`
     :host {
-      background-color: var(--oscd-base2);
+      background-color: var(--md-sys-color-surface);
       display: flex;
       flex-direction: column;
       height: 100%;
@@ -189,53 +189,53 @@ export default class OscdEditorSubscriberMsgBinding extends ScopedElementsMixin(
       gap: 16px;
       padding: 8px 12px;
       flex-wrap: wrap;
-      background-color: var(--oscd-base2);
+      background-color: var(--md-sys-color-surface);
     }
 
     oscd-outlined-segmented-button {
       flex-shrink: 0;
       --md-outlined-segmented-button-selected-container-color: var(
-        --oscd-primary,
+        --md-sys-color-primary,
         #005ac1
       );
       --md-outlined-segmented-button-selected-label-text-color: var(
-        --oscd-base3,
+        --md-sys-color-on-primary,
         #ffffff
       );
       --md-outlined-segmented-button-selected-icon-color: var(
-        --oscd-base3,
+        --md-sys-color-on-primary,
         #ffffff
       );
       --md-outlined-segmented-button-selected-hover-label-text-color: var(
-        --oscd-base3,
+        --md-sys-color-on-primary,
         #ffffff
       );
       --md-outlined-segmented-button-selected-hover-icon-color: var(
-        --oscd-base3,
+        --md-sys-color-on-primary,
         #ffffff
       );
       --md-outlined-segmented-button-selected-focus-label-text-color: var(
-        --oscd-base3,
+        --md-sys-color-on-primary,
         #ffffff
       );
       --md-outlined-segmented-button-selected-focus-icon-color: var(
-        --oscd-base3,
+        --md-sys-color-on-primary,
         #ffffff
       );
       --md-outlined-segmented-button-selected-pressed-label-text-color: var(
-        --oscd-base3,
+        --md-sys-color-on-primary,
         #ffffff
       );
       --md-outlined-segmented-button-selected-pressed-icon-color: var(
-        --oscd-base3,
+        --md-sys-color-on-primary,
         #ffffff
       );
       --md-outlined-segmented-button-selected-hover-state-layer-color: var(
-        --oscd-base3,
+        --md-sys-color-on-primary,
         #ffffff
       );
       --md-outlined-segmented-button-selected-pressed-state-layer-color: var(
-        --oscd-base3,
+        --md-sys-color-on-primary,
         #ffffff
       );
     }
@@ -261,7 +261,7 @@ export default class OscdEditorSubscriberMsgBinding extends ScopedElementsMixin(
     .left-column {
       display: flex;
       flex-direction: column;
-      background-color: var(--oscd-base3);
+      background-color: var(--md-sys-color-surface);
     }
 
     .left-column control-block-list,
@@ -273,7 +273,7 @@ export default class OscdEditorSubscriberMsgBinding extends ScopedElementsMixin(
     .container {
       display: flex;
       padding: 8px 6px 16px;
-      background-color: var(--oscd-base2);
+      background-color: var(--md-sys-color-surface);
       flex: 1;
       min-height: 0;
     }
@@ -283,7 +283,7 @@ export default class OscdEditorSubscriberMsgBinding extends ScopedElementsMixin(
       margin: 0px 6px 0px;
       min-width: 300px;
       height: 100%;
-      overflow-y: scroll;
+      overflow-y: auto;
     }
   `;
 }
