@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.5](https://github.com/OMICRONEnergyOSS/oscd-editor-subscriber-msgbinding/compare/oscd-editor-subscriber-msgbinding-v0.0.4...oscd-editor-subscriber-msgbinding-v0.0.5) (2026-11-25)
+
+
+### Features
+
+* updated oscd-ui to 0.1.4 and aligned theming accordingly + removed redundant scrollbars ([ca0e684](https://github.com/OMICRONEnergyOSS/oscd-editor-subscriber-msgbinding/commit/ca0e684fb6cb8d750f7ea94b57fbbd7935db52e1))
+
 ## [0.0.4](https://github.com/OMICRONEnergyOSS/oscd-editor-subscriber-msgbinding/compare/oscd-editor-subscriber-msgbinding-v0.0.3...oscd-editor-subscriber-msgbinding-v0.0.4) (2026-10-09)
 
 
